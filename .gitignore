@@ -1,5 +1,6 @@
 .bundle
 .cache
+.env
 .DS_Store
 .sass-cache
 build/
