@@ -1,4 +1,4 @@
-vinkCms.s3 = (function() {
+vinkCms.auth = (function() {
   function init(params) {
     AWS.config.update({
       region: params.region,
@@ -7,4 +7,8 @@ vinkCms.s3 = (function() {
       })
     });
   }
-});
+
+  return {
+    init: init
+  };
+}());

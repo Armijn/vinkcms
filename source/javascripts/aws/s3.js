@@ -20,4 +20,9 @@ vinkCms.s3 = (function() {
       }
     });
   }
-});
+
+  return {
+    init: init,
+    upload: upload
+  };
+}());

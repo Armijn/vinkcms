@@ -1,4 +1,4 @@
 //= require standards.js
-//= require s3.js
-//= require auth.js
-//= require login.js
+//= require_directory ./tools
+//= require_directory ./aws
+//= require_directory ./ui
