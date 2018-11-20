@@ -1,14 +1,10 @@
 $(function() {
-  $("#upload").on("click", () => {
-    vinkCms.s3.upload("test", "test", callback);
-  });
+  vinkCms.template.setupNav($(".nav"), onNavClick);
 });
 
+function onNavClick(templateId) {
+  vinkCms.template.generate($(".entry"), templateId, onEntrySubmit);
+}
 
-function callback(err, data) {
-  if(err) {
-    console.log(err);
-  } else {
-    console.log(data);
-  }
+function onEntrySubmit() {
 }
