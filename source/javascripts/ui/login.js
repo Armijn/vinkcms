@@ -9,8 +9,14 @@ $(function() {
       region: $("#region").val(),
       bucketName: $("#bucketName").val()
     }
-    vinkCms.auth.init(params);
-    vinkCms.preferences.save(params);
-    window.location.href = "/cms";
+    login(params);
   });
 });
+
+function login(params) {
+  vinkCms.auth.init(params);
+  vinkCms.s3.init(params);
+  vinkCms.preferences.save(params);
+  $(".login").addClass("disabled");
+  $(".cms").removeClass("disabled");
+}

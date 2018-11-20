@@ -12,7 +12,7 @@ vinkCms.s3 = (function() {
   }
 
   function upload(fileName, body, callback) {
-    s3.upload(params, function(err, data) {
+    s3.upload({Key: fileName, Body: body}, function(err, data) {
       if(err) {
         callback(err);
       } else {
