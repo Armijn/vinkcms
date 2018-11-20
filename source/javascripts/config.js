@@ -3,14 +3,17 @@ let vinkCms = {
   templates: [
     {
       name: "My template",
-      title: {class: "title"},
       content: [
         {
-          markdown: true,
+          type: "markDownTextArea",
           class: "main-content"
         },
         {
-          markdown: true,
+          type: "textArea",
+          class: "other-block"
+        },
+        {
+          type: "input",
           class: "other-block"
         }
       ]
