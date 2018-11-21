@@ -1,14 +1,13 @@
 vinkCms.s3 = (function() {
   const APIVERSION = "2006-03-01";
   let s3 = null;
+  let dataBucket;
+  let siteBucket;
 
   function init(params) {
-    s3 = new AWS.S3({
-      apiVersion: APIVERSION,
-      params: {
-        Bucket: params.bucketName
-      }
-    });
+    s3 = new AWS.S3({ apiVersion: APIVERSION });
+    dataBucket = params.dataBucket;
+    siteBucket = params.siteBucket;
   }
 
   function upload(fileName, body, callback) {
@@ -18,8 +17,8 @@ vinkCms.s3 = (function() {
     });
   }
 
-  function list(callback) {
-    let params = s3.config.params;
+  function list(bucket, callback) {
+    let params = { Bucket: bucket };
     params.Delimiter = "/";
     s3.listObjectsV2(params, function(err, data) {
       if(isError(err)) return;
@@ -27,15 +26,15 @@ vinkCms.s3 = (function() {
       data.Contents.forEach(function(element) {
         list.push({
           slug: element.Key,
-          url: getUrlFor(element.Key)
+          url: getUrlFor(bucket, element.Key)
         });
       });
       callback(list);
     });
   }
 
-  function getObject(key, callback) {
-    let params = { Bucket: s3.config.params.Bucket };
+  function getObject(bucket, key, callback) {
+    let params = { Bucket: bucket };
     params.Key = key;
     s3.getObject(params, function(err, data) {
       if(isError(err)) return;
@@ -43,8 +42,8 @@ vinkCms.s3 = (function() {
     });
   }
 
-  function getUrlFor(key) {
-    return `http://${s3.config.params.Bucket}.s3-website.${AWS.config.region}.amazonaws.com/${key}`;
+  function getUrlFor(bucket, key) {
+    return `http://${bucket}.s3-website.${AWS.config.region}.amazonaws.com/${key}`;
   }
 
   function isError(err) {
@@ -54,10 +53,20 @@ vinkCms.s3 = (function() {
     }
   }
 
+  function getDataBucket() {
+    return dataBucket;
+  }
+
+  function getSiteBucket() {
+    return siteBucket;
+  }
+
   return {
     init: init,
     upload: upload,
     list: list,
-    getObject: getObject
+    getObject: getObject,
+    getDataBucket: getDataBucket,
+    getSiteBucket: getSiteBucket
   };
 }());

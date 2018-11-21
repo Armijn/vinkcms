@@ -5,7 +5,8 @@ $(function() {
     let params = {
       identityPoolId: $("#identityPoolId").val(),
       region: $("#region").val(),
-      bucketName: $("#bucketName").val()
+      dataBucket: $("#dataBucket").val(),
+      siteBucket: $("#siteBucket").val()
     }
     if($("#remember").is(":checked")) vinkCms.preferences.save(params);
     login(params);

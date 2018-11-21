@@ -3,7 +3,7 @@ vinkCms.cmsUI = (function() {
   function init() {
     $(function() {
       vinkCms.template.setupNav($(".nav"), onNavClick);
-      vinkCms.s3.list(onRetievedList);
+      vinkCms.s3.list(vinkCms.s3.getDataBucket(), onRetievedList);
     });
   }
 
@@ -18,10 +18,6 @@ function onNavClick(templateId) {
 
 function onEntrySubmit(entry, html) {
   vinkCms.s3.upload(entry.meta.slug.val, JSON.stringify(entry), onEntryUploaded);
-}
-
-function onEntryUploaded() {
-  vinkCms.s3.list();
 }
 
 function onEntryUploaded() {
@@ -41,7 +37,7 @@ function onRetievedList(list) {
 }
 
 function editEntry(slug) {
-  vinkCms.s3.getObject(slug, onEntryReceived);
+  vinkCms.s3.getObject(vinkCms.s3.getDataBucket(), slug, onEntryReceived);
 }
 
 function onEntryReceived(entry) {

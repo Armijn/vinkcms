@@ -5,13 +5,15 @@ title: VinkCms login
 .login
   %input#identityPoolId{name: "identityPoolId", type: "text", placeholder: "Identity pool id"}
   %input#region{name: "region", type: "text", placeholder: "region"}
-  %input#bucketName{name: "bucketName", type: "text", placeholder: "bucket"}
+  %input#dataBucket{name: "bucketName", type: "text", placeholder: "data bucket"}
+  %input#siteBucket{name: "bucketName", type: "text", placeholder: "site bucket"}
   %label
     %input#remember{name: "remember", type: "checkbox", value: false}
     Remember
   %input#submit{type: "submit", value: "Login"}
 
 .cms.disabled
+  %a{href: "", class: "js-logout"} Logout
   .nav
   .list
   .entry

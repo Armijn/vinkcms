@@ -6,7 +6,8 @@ vinkCms.preferences = (function() {
     params = {
       identityPoolId: localStorage.getItem("identityPoolId"),
       region: localStorage.getItem("region"),
-      bucketName: localStorage.getItem("bucketName")
+      siteBucket: localStorage.getItem("siteBucket"),
+      dataBucket: localStorage.getItem("dataBucket")
     }
   }
 
@@ -17,11 +18,21 @@ vinkCms.preferences = (function() {
   function save(params) {
     localStorage.setItem("identityPoolId", params.identityPoolId);
     localStorage.setItem("region", params.region);
-    localStorage.setItem("bucketName", params.bucketName);
+    localStorage.setItem("siteBucket", params.siteBucket);
+    localStorage.setItem("dataBucket", params.dataBucket);
+  }
+
+  function destroy() {
+    localStorage.removeItem("identityPoolId");
+    localStorage.removeItem("region");
+    localStorage.removeItem("siteBucket");
+    localStorage.removeItem("dataBucket");
+    localStorage.removeItem("bucketName");
   }
 
   return {
     get: get,
-    save: save
+    save: save,
+    destroy: destroy
   };
 }());
