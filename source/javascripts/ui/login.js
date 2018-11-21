@@ -7,7 +7,7 @@ $(function() {
       region: $("#region").val(),
       bucketName: $("#bucketName").val()
     }
-    vinkCms.preferences.save(params);
+    if($("#remember").is(":checked")) vinkCms.preferences.save(params);
     login(params);
   });
 });
