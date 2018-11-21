@@ -10,8 +10,24 @@ vinkCms.s3 = (function() {
     siteBucket = params.siteBucket;
   }
 
-  function upload(fileName, body, callback) {
-    s3.upload({Key: fileName, Body: body}, function(err, data) {
+  function siteUpload(fileName, body, callback) {
+    let params = {
+      Bucket: siteBucket,
+      ACL: "public-read",
+      ContentType: "text/html; charset=UTF-8",
+    };
+    upload(params, fileName, body, callback);
+  }
+
+  function dataUpload(fileName, body, callback) {
+    let params = { Bucket: dataBucket };
+    upload(params, fileName, body, callback);
+  }
+
+  function upload(params, fileName, body, callback) {
+    let defaultParams = { Key: fileName, Body: body };
+    let mergedParams = Object.assign(defaultParams, params);
+    s3.upload(mergedParams, function(err, data) {
       if(isError(err)) return;
       callback();
     });
@@ -48,7 +64,7 @@ vinkCms.s3 = (function() {
 
   function isError(err) {
     if(err) {
-      alert("error");
+      alert(err);
       return true;
     }
   }
@@ -63,7 +79,8 @@ vinkCms.s3 = (function() {
 
   return {
     init: init,
-    upload: upload,
+    siteUpload: siteUpload,
+    dataUpload: dataUpload,
     list: list,
     getObject: getObject,
     getDataBucket: getDataBucket,

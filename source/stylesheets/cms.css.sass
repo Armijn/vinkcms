@@ -1,14 +1,20 @@
 .cms
   display: flex
-  align-items: stretch
-  height: 100vh
 
   &.disabled
     display: none
 
   .nav
+    position: relative
+    display: flex
+    flex-direction: column
+    align-items: stretch
     width: 150px
     background-color: #252A3A
+    text-align: center
+
+    .new-items
+      height: 100%
 
   .list
     width: 300px
@@ -16,7 +22,10 @@
 
     a
       display: block
-      margin: 10px 50px
 
-  .entry
-    flex-grow: 1
+  .nav,
+  .list
+    padding: 20px 0
+
+  .logout
+    color: #FFFFFF

@@ -7,25 +7,25 @@ vinkCms.template = (function() {
   const TEXTAREA = "<textarea></textarea>";
   const DEFAULT_META = { title: { type: "input" }, slug: { type: "input" } };
 
-  function newEntry(container, template, callback) {
+  function newEntry(container, template) {
     template.meta = getDefaultMeta(template);
-    generate(container, template, callback);
+    generate(container, template);
   }
 
-  function editEntry(container, template, callback) {
-    generate(container, template, callback);
+  function editEntry(container, template) {
+    generate(container, template);
   }
 
-  function generate(container, template, callback) {
+  function generate(container, template) {
     entry = vinkCms.helper.clone(template);
     container.empty();
-    generateView(container, callback);
+    generateView(container);
   }
 
-  function generateView(container, callback) {
+  function generateView(container) {
     addPreDefinedFields(container);
     addCustomContentBlocks(container);
-    addSaveButton(container, callback);
+    addSaveButton(container);
   }
 
   function addCustomContentBlocks(container) {
@@ -65,17 +65,20 @@ vinkCms.template = (function() {
     addView(container, SLUG, entry.meta.slug);
   }
 
-  function addSaveButton(container, callback) {
-    let save = $(`<input type="submit" value="Save">`);
-    save.on("click", function() { processEntry(callback); });
+  function addSaveButton(container) {
+    let save = $(`<input class="save" type="submit" value="Save">`);
+    save.on("click", function() { processEntry(); });
     container.append(save);
   }
 
   function processEntry(callback) {
     let json = vinkCms.jsonProcessor.generate(entry);
+    vinkCms.s3.dataUpload(entry.meta.slug.val, JSON.stringify(entry), vinkCms.template.onDataUploaded);
+  }
+
+  function onDataUploaded() {
     let html = vinkCms.htmlProcessor.generate(entry);
-    console.log(html);
-    // callback(json, html);
+    vinkCms.s3.siteUpload(entry.meta.slug.val + ".html", html, onEntryUploaded);
   }
 
   function addView(container, reference, contentBlock) {
@@ -113,6 +116,7 @@ vinkCms.template = (function() {
   return {
     newEntry: newEntry,
     editEntry: editEntry,
-    setupNav: setupNav
+    setupNav: setupNav,
+    onDataUploaded: onDataUploaded
   };
 }());

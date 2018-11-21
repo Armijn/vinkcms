@@ -2,7 +2,7 @@ vinkCms.cmsUI = (function() {
 
   function init() {
     $(function() {
-      vinkCms.template.setupNav($(".nav"), onNavClick);
+      vinkCms.template.setupNav($(".js-new-items"), onNavClick);
       vinkCms.s3.list(vinkCms.s3.getDataBucket(), onRetievedList);
     });
   }
@@ -13,11 +13,7 @@ vinkCms.cmsUI = (function() {
 }());
 
 function onNavClick(templateId) {
-  vinkCms.template.newEntry($(".entry"), vinkCms.templates[templateId], onEntrySubmit);
-}
-
-function onEntrySubmit(entry, html) {
-  vinkCms.s3.upload(entry.meta.slug.val, JSON.stringify(entry), onEntryUploaded);
+  vinkCms.template.newEntry($(".entry"), vinkCms.templates[templateId]);
 }
 
 function onEntryUploaded() {
@@ -41,5 +37,5 @@ function editEntry(slug) {
 }
 
 function onEntryReceived(entry) {
-  vinkCms.template.editEntry($(".entry"), entry, onEntrySubmit);
+  vinkCms.template.editEntry($(".entry"), entry);
 }

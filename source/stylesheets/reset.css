@@ -39,10 +39,14 @@ blockquote, q {
 }
 blockquote:before, blockquote:after,
 q:before, q:after {
-	content: '';
+	content: "";
 	content: none;
 }
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+}
+
+html {
+	font-family: "Lato", sans-serif;
 }
