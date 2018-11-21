@@ -1,14 +1,35 @@
 vinkCms.template = (function() {
+  let entry = {};
+  const TITLE = `<input type="text" name="title" placeholder="title">`;
+  const SLUG = `<input type="text" name="slug" placeholder="slug">`;
+  const MARKDOWN = `<textarea class="js-markdown"></textarea>`;
+  const INPUT = `<input type="text"></input>`;
+  const TEXTAREA = "<textarea></textarea>";
+  const DEFAULT_META = { title: { type: "input" }, slug: { type: "input" } };
 
-  function generate(container, templateId, callback) {
-    let template = vinkCms.templates[templateId];
-    addPreDefinedFields(container, template);
-    addCustomContentBlocks(container, template);
-    addSaveButton(container);
+  function newEntry(container, template, callback) {
+    template.meta = getDefaultMeta(template);
+    generate(container, template, callback);
   }
 
-  function addCustomContentBlocks(container, template) {
-    template.content.forEach(function(contentBlock) {
+  function editEntry(container, template, callback) {
+    generate(container, template, callback);
+  }
+
+  function generate(container, template, callback) {
+    entry = vinkCms.helper.clone(template);
+    container.empty();
+    generateView(container, callback);
+  }
+
+  function generateView(container, callback) {
+    addPreDefinedFields(container);
+    addCustomContentBlocks(container);
+    addSaveButton(container, callback);
+  }
+
+  function addCustomContentBlocks(container) {
+    entry.content.forEach(function(contentBlock) {
         switch(contentBlock.type) {
         case "markDownTextArea":
             addMarkdownTextArea(container, contentBlock);
@@ -24,35 +45,48 @@ vinkCms.template = (function() {
   }
 
   function addMarkdownTextArea(container, contentBlock) {
-    let textArea = addTextArea(container, contentBlock);
-    new SimpleMDE({ element: textArea[0] });
+    addView(container, MARKDOWN, contentBlock);
+    let mdEditor = new SimpleMDE({ element: $(".js-markdown")[0] });
+    mdEditor.value(contentBlock.val);
+    addViewReference(mdEditor, contentBlock);
   }
 
   function addTextArea(container, contentBlock) {
-    let textArea = $("<textarea></textarea>");
-    container.append(textArea);
-    return textArea;
+    addView(container, TEXTAREA, contentBlock);
   }
 
   function addInput(container, contentBlock) {
-    let input = $(`<input type="text"></input>"`);
-    container.append(input);
+    addView(container, INPUT, contentBlock);
   }
 
-  function addPreDefinedFields(container, template) {
-    container.append(`<h1>${template.name}</h1>
-                      <input type="text" name="title" placeholder="title">
-                      <input type="text" name="slug" placeholder="slug">`);
+  function addPreDefinedFields(container) {
+    container.append(`<h1>${entry.name}</h1>`);
+    addView(container, TITLE, entry.meta.title);
+    addView(container, SLUG, entry.meta.slug);
   }
 
-  function addSaveButton(container) {
+  function addSaveButton(container, callback) {
     let save = $(`<input type="submit" value="Save">`);
-    save.on("click", function() {
-      let json = vinkCms.jsonProcessor.generate(container);
-      let html = vinkCms.htmlProcessor.generate(json);
-      callback(json, html);
-    });
+    save.on("click", function() { processEntry(callback); });
     container.append(save);
+  }
+
+  function processEntry(callback) {
+    let json = vinkCms.jsonProcessor.generate(entry);
+    let html = vinkCms.htmlProcessor.generate(entry);
+    console.log(html);
+    // callback(json, html);
+  }
+
+  function addView(container, reference, contentBlock) {
+    let item = $(reference);
+    container.append(item);
+    addViewReference(item, contentBlock);
+    if(contentBlock.val) item.val(contentBlock.val);
+  }
+
+  function addViewReference(reference, contentBlock) {
+    contentBlock.reference = reference;
   }
 
   function setupNav(container, callback) {
@@ -65,15 +99,20 @@ vinkCms.template = (function() {
     });
   }
 
+  function getDefaultMeta(template) {
+    if(template.meta) return Object.assign(DEFAULT_META, template.meta);
+    return DEFAULT_META;
+  }
+
   function generateNavItem(template) {
-    return $(`<input
-              type="submit"
+    return $(`<input type="submit"
               data-template-id="${vinkCms.templates.indexOf(template)}"
-              value="${template.name}">`)
+              value="${template.name}">`);
   }
 
   return {
-    setupNav: setupNav,
-    generate: generate
+    newEntry: newEntry,
+    editEntry: editEntry,
+    setupNav: setupNav
   };
 }());

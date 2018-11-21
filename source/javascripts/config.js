@@ -3,6 +3,11 @@ let vinkCms = {
   templates: [
     {
       name: "My template",
+      meta: {
+        twitter: {
+          type: "input"
+        }
+      },
       content: [
         {
           type: "markDownTextArea",
