@@ -1,8 +1,12 @@
 .entry
   width: calc(100% - 80px)
   height: calc(100vh - 80px)
+  display: none
   padding: 40px
   overflow-y: scroll
+
+  &.active
+    display: block
 
   input,
   textarea
@@ -32,6 +36,9 @@
   h1
     font-size: 22pt
     margin: 20px 0
+
+  h2
+    font-size: 16pt
 
   .save
     width: auto

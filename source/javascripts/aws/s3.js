@@ -29,7 +29,7 @@ vinkCms.s3 = (function() {
     let mergedParams = Object.assign(defaultParams, params);
     s3.upload(mergedParams, function(err, data) {
       if(isError(err)) return;
-      callback();
+      callback(data);
     });
   }
 
