@@ -58,8 +58,30 @@ vinkCms.s3 = (function() {
     });
   }
 
+  function deleteObject(key, callback) {
+    console.log(key);
+    let params = { Delete: { Objects: [{ Key: key }] } };
+    deleteFromSite(params, callback);
+  }
+
+  function deleteFromSite(params, callback) {
+    params.Bucket = siteBucket;
+    s3.deleteObjects(params, function(err, data) {
+      if(isError(err)) return;
+      deleteFromData(params, callback);
+    });
+  }
+
+  function deleteFromData(params, callback) {
+    params.Bucket = dataBucket;
+    s3.deleteObjects(params, function(err, data) {
+      if(isError(err)) return;
+      callback();
+    });
+  }
+
   function getUrlFor(key) {
-    return `http://${siteBucket}.s3-website.${AWS.config.region}.amazonaws.com/${key}.html`;
+    return `http://${siteBucket}.s3-website.${AWS.config.region}.amazonaws.com/${key}`;
   }
 
   function isError(err) {
@@ -83,6 +105,7 @@ vinkCms.s3 = (function() {
     dataUpload: dataUpload,
     list: list,
     getObject: getObject,
+    deleteObject: deleteObject,
     getDataBucket: getDataBucket,
     getSiteBucket: getSiteBucket,
     getUrlFor: getUrlFor

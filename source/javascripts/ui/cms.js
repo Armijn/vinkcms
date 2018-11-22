@@ -17,16 +17,24 @@ vinkCms.cmsUI = (function() {
 
       $(".js-edit-entry-item").on("click", function(e) {
         e.preventDefault();
+        let slug = window.location.hash.replace("#", "");
         showEdit();
-        editEntry($(this).attr("id"));
+        editEntry(slug);
+      });
+
+      $(".js-delete-entry-item").on("click", function(e) {
+        e.preventDefault();
+        let slug = window.location.hash.replace("#", "");
+        deleteEntry(slug);
+      });
+
+      $(".js-exit-entry-item").on("click", function(e) {
+        e.preventDefault();
+        showPreview();
       });
 
       let slug = window.location.hash.replace("#", "");
-      if(slug !== "") {
-        onItemPreview(slug);
-      } else {
-        $(".js-actions").removeClass("active");
-      }
+      if(slug !== "") { onItemPreview(slug); }
     });
   }
 
@@ -37,24 +45,26 @@ vinkCms.cmsUI = (function() {
 
 function onItemPreview(slug) {
   showPreview();
-  $(".js-actions").addClass("active");
   $(".js-edit-entry-item").attr("id", slug);
   $(".js-preview iframe").attr('src', vinkCms.s3.getUrlFor(slug));
 }
 
 function showPreview() {
-  $(".js-preview").addClass("active");
-  $(".js-entry").removeClass("active");
+  $(".js-content").addClass("preview").removeClass("edit");
 }
 
 function showEdit() {
-  $(".js-preview").removeClass("active");
-  $(".js-entry").addClass("active");
+  $(".js-content").addClass("edit").removeClass("preview");
 }
 
 function onNavClick(templateId) {
   showEdit();
   vinkCms.template.newEntry($(".form-container"), vinkCms.templates[templateId]);
+}
+
+function onEntryDelete() {
+  history.pushState("", "", "");
+  location.reload();
 }
 
 function onEntryUploaded(data) {
@@ -70,6 +80,10 @@ function onRetievedList(list) {
 
 function editEntry(slug) {
   vinkCms.s3.getObject(vinkCms.s3.getDataBucket(), slug, onEntryReceived);
+}
+
+function deleteEntry(slug) {
+  vinkCms.s3.deleteObject(slug, onEntryDelete);
 }
 
 function onEntryReceived(entry) {

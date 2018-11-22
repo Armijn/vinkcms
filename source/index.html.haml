@@ -17,11 +17,14 @@ title: VinkCms login
     .js-new-items.new-items
     %a{href: "", class: "js-logout logout"} Logout
   .list
-  .entry.js-entry
-    %form
-      .form-container
-      %input.save{type: "submit", value: "Save"}
-  .preview.js-preview.active
-    .actions.js-actions
-      %a{href: "", class: "js-edit-entry-item"} Edit
-    %iframe
+  .content.js-content
+    .actions
+      %a.back{href: "", class: "js-exit-entry-item"} Back
+      %a.edit{href: "", class: "js-edit-entry-item"} Edit
+      %a.delete{href: "", class: "js-delete-entry-item"} Delete
+    .entry
+      %form
+        .form-container
+        %input.save{type: "submit", value: "Save"}
+    .preview.js-preview
+      %iframe

@@ -55,7 +55,7 @@ vinkCms.template = (function() {
 
   function onDataUploaded() {
     let html = vinkCms.htmlProcessor.generate(entry);
-    vinkCms.s3.siteUpload(entry.meta.slug.val + ".html", html, onEntryUploaded);
+    vinkCms.s3.siteUpload(entry.meta.slug.val, html, onEntryUploaded);
   }
 
   function getDefaultMeta(template) {

@@ -1,0 +1,43 @@
+.content
+  position: relative
+  width: calc(100% - 80px)
+  height: calc(100vh - 80px)
+  padding: 40px
+  overflow-y: scroll
+
+  .actions
+    position: absolute
+    height: 20px
+    top: 0
+    left: 0
+    width: calc(100% - 80px)
+    padding: 10px 40px
+    background-color: #252A3A
+
+    a
+      color: #FFFFFF
+      display: none
+
+  &.preview
+    .entry
+      display: none
+    .preview
+      display: block
+    .actions
+      .edit,
+      .delete
+        display: inline-block
+      .back
+        display: none
+
+  &.edit
+    .entry
+      display: block
+    .preview
+      display: none
+    .actions
+      .edit
+        display: none
+      .back,
+      .delete
+        display: inline-block
