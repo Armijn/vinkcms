@@ -9,10 +9,12 @@ vinkCms.uploadHandler = (function() {
   let requestSize;
   let currentRequest;
   let metaParams;
+  let key;
 
   function upload(data, cb) {
     let htmlParams = vinkCms.params.getHtmlParams(data.html);
     let entryParams = vinkCms.params.getDataParams(data.entry);
+    key = entryParams.Key;
     metaParams = vinkCms.params.getMetaParams(data.meta);
 
     callback = cb;
@@ -51,7 +53,7 @@ vinkCms.uploadHandler = (function() {
 
   function onItemUploaded() {
     currentRequest++;
-    if(currentRequest == requestSize) callback();
+    if(currentRequest == requestSize) callback(key);
   }
 
   return {

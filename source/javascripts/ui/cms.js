@@ -66,6 +66,7 @@ function onEntryDelete() {
 }
 
 function onEntryUploaded(data) {
+  window.location.href = `#${data}`;
   location.reload();
 }
 

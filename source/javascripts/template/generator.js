@@ -20,6 +20,7 @@ vinkCms.template = (function() {
 
   function editEntry(container, template) {
     generate(container, template);
+    template.meta.oldSlug = template.meta.slug.val;
     $("h1").append(` - <a target="_blank" href="${vinkCms.s3.getUrlFor(template.meta.slug.val)}">${template.meta.slug.val}</a>`);
   }
 
@@ -51,17 +52,26 @@ vinkCms.template = (function() {
     let entryJson = JSON.stringify(vinkCms.jsonProcessor.generate(entry));
     let meta = JSON.stringify(vinkCms.jsonProcessor.generateMeta(entry));
     let html = vinkCms.htmlProcessor.generate(entry);
-    uploadEntry(html, entryJson, meta);
-  }
-
-  function uploadEntry(html, entryJson, meta) {
-    let siteBucket = vinkCms.s3.getSiteBucket();
-    let dataBucket = vinkCms.s3.getDataBucket();
-    vinkCms.uploadHandler.upload({
+    let data = {
       html: { Key: entry.meta.slug.val, Body: html },
       entry: { Key: entry.meta.slug.val, Body: entryJson },
-      meta: { slug: entry.meta.slug.val, Body: meta },
-    }, onEntryUploaded);
+      meta: { slug: entry.meta.slug.val, Body: meta }
+    };
+
+    if(entry.meta.oldSlug == undefined || entry.meta.oldSlug === entry.meta.slug.val) {
+      uploadEntry(data);
+    } else {
+      renameEntry(entry.meta.oldSlug, data);
+      delete entry.meta.oldSlug;
+    }
+  }
+
+  function uploadEntry(data) {
+    vinkCms.uploadHandler.upload(data, onEntryUploaded);
+  }
+
+  function renameEntry(oldSlug, data) {
+    vinkCms.renameHandler.rename(oldSlug, data, onEntryUploaded);
   }
 
   function onDataUploaded() {
