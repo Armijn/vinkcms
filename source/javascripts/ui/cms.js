@@ -83,7 +83,7 @@ function editEntry(slug) {
 }
 
 function deleteEntry(slug) {
-  vinkCms.s3.deleteObject(slug, onEntryDelete);
+  vinkCms.deleteHandler.deleteObject(slug, onEntryDelete);
 }
 
 function onEntryReceived(entry) {

@@ -19,6 +19,7 @@ vinkCms.template = (function() {
   }
 
   function editEntry(container, template) {
+    console.log(template);
     generate(container, template);
     $("h1").append(` - <a target="_blank" href="${vinkCms.s3.getUrlFor(template.meta.slug.val)}">${template.meta.slug.val}</a>`);
   }
@@ -28,13 +29,16 @@ vinkCms.template = (function() {
     container.empty();
     container.append(`<h1>${entry.name}</h1>`);
     addPreDefinedFields($("<fieldset></fieldset>").appendTo(container));
-    addCustomContentBlocks($("<fieldset></fieldset>").appendTo(container));
+    addCustomContentBlocks(container, "JSON", entry.json);
+    addCustomContentBlocks(container, "Content", entry.content);
   }
 
-  function addCustomContentBlocks(container) {
-    container.append(`<h2>Content</h2>`);
-    entry.content.forEach(function(contentBlock) {
-      vinkCms.modules[contentBlock.type]().generate(container, contentBlock);
+  function addCustomContentBlocks(container, name, items) {
+    if(!items) return;
+    let fieldSet = $("<fieldset></fieldset>").appendTo(container);
+    fieldSet.append(`<h2>${name}</h2>`);
+    items.forEach(function(contentBlock) {
+      vinkCms.modules[contentBlock.type]().generate(fieldSet, contentBlock);
     });
   }
 
@@ -45,16 +49,25 @@ vinkCms.template = (function() {
   }
 
   function processEntry() {
-    let json = vinkCms.jsonProcessor.generate(entry);
-    vinkCms.s3.dataUpload(
-      entry.meta.slug.val,
-      JSON.stringify(entry),
-      vinkCms.template.onDataUploaded
-    );
+    let entryJson = JSON.stringify(vinkCms.jsonProcessor.generate(entry));
+    let meta = JSON.stringify(vinkCms.jsonProcessor.generateMeta(entry));
+    let html = vinkCms.htmlProcessor.generate(entry);
+    console.log(entry);
+    uploadEntry(html, entryJson, meta);
+  }
+
+  function uploadEntry(html, entryJson, meta) {
+    let siteBucket = vinkCms.s3.getSiteBucket();
+    let dataBucket = vinkCms.s3.getDataBucket();
+    console.log(entryJson)
+    vinkCms.uploadHandler.upload({
+      html: { Key: entry.meta.slug.val, Body: html },
+      entry: { Key: entry.meta.slug.val, Body: entryJson },
+      meta: { slug: entry.meta.slug.val, Body: meta },
+    }, onEntryUploaded);
   }
 
   function onDataUploaded() {
-    let html = vinkCms.htmlProcessor.generate(entry);
     vinkCms.s3.siteUpload(entry.meta.slug.val, html, onEntryUploaded);
   }
 

@@ -10,24 +10,8 @@ vinkCms.s3 = (function() {
     siteBucket = params.siteBucket;
   }
 
-  function siteUpload(fileName, body, callback) {
-    let params = {
-      Bucket: siteBucket,
-      ACL: "public-read",
-      ContentType: "text/html; charset=UTF-8",
-    };
-    upload(params, fileName, body, callback);
-  }
-
-  function dataUpload(fileName, body, callback) {
-    let params = { Bucket: dataBucket };
-    upload(params, fileName, body, callback);
-  }
-
-  function upload(params, fileName, body, callback) {
-    let defaultParams = { Key: fileName, Body: body };
-    let mergedParams = Object.assign(defaultParams, params);
-    s3.upload(mergedParams, function(err, data) {
+  function upload(params, callback) {
+    s3.upload(params, function(err, data) {
       if(isError(err)) return;
       callback(data);
     });
@@ -49,6 +33,13 @@ vinkCms.s3 = (function() {
     });
   }
 
+  function headObject(bucket, key, callback) {
+    let params = { Bucket: bucket, Key: key };
+    s3.headObject(params, function(err, data) {
+      callback(err, data);
+    });
+  }
+
   function getObject(bucket, key, callback) {
     let params = { Bucket: bucket };
     params.Key = key;
@@ -58,22 +49,11 @@ vinkCms.s3 = (function() {
     });
   }
 
-  function deleteObject(key, callback) {
-    console.log(key);
-    let params = { Delete: { Objects: [{ Key: key }] } };
-    deleteFromSite(params, callback);
-  }
-
-  function deleteFromSite(params, callback) {
-    params.Bucket = siteBucket;
-    s3.deleteObjects(params, function(err, data) {
-      if(isError(err)) return;
-      deleteFromData(params, callback);
-    });
-  }
-
-  function deleteFromData(params, callback) {
-    params.Bucket = dataBucket;
+  function deleteObject(p, callback) {
+    let params = {
+      Bucket: p.Bucket,
+      Delete: { Objects: [{ Key: p.Key }] }
+    };
     s3.deleteObjects(params, function(err, data) {
       if(isError(err)) return;
       callback();
@@ -101,10 +81,10 @@ vinkCms.s3 = (function() {
 
   return {
     init: init,
-    siteUpload: siteUpload,
-    dataUpload: dataUpload,
+    upload: upload,
     list: list,
     getObject: getObject,
+    headObject: headObject,
     deleteObject: deleteObject,
     getDataBucket: getDataBucket,
     getSiteBucket: getSiteBucket,
