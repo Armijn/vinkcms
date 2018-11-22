@@ -12,6 +12,31 @@ vinkCms.modules.markDownTextArea = (function() {
     });
     if(contentBlock.val) item.value(contentBlock.val);
     contentBlock.reference = this;
+
+    $(".editor-toolbar").append(`<input class="image-upload" type="file">`);
+    $(".fa-picture-o").on("click", function() {
+      $(".image-upload").trigger("click");
+    });
+
+    $(".image-upload").on("change", function() {
+      onImageSelected($(this));
+    });
+  }
+
+  function onImageSelected(element) {
+    let file = element[0].files[0];
+    let params = {
+      Key: `images/${file.name.replace(/\s|\\|\/|\(|\)/g,'-')}`,
+      Body: file,
+      ContentType: file.type
+    }
+    vinkCms.s3.imageUpload(params, onImageUploaded);
+  }
+
+  function onImageUploaded(data) {
+    let replaced = item.value().replace("![](http://)", `![${data.key.replace("images/", "")}](${data.Location})`);
+    item.value(replaced);
+    console.log(data);
   }
 
   function val() {
@@ -24,6 +49,7 @@ vinkCms.modules.markDownTextArea = (function() {
 
   return {
     generate: generate,
+    onImageUploaded: onImageUploaded,
     val: val,
     json: json
   };

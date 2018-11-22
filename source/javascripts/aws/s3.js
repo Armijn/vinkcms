@@ -17,6 +17,18 @@ vinkCms.s3 = (function() {
     });
   }
 
+  function imageUpload(orgParams, callback) {
+    let params = {
+      Bucket: siteBucket,
+      ACL: "public-read"
+    }
+    params = Object.assign(params, orgParams);
+    s3.upload(params, function(err, data) {
+      if(isError(err)) return;
+      callback(data);
+    });
+  }
+
   function list(bucket, callback) {
     let params = { Bucket: bucket };
     params.Delimiter = "/";
@@ -82,6 +94,7 @@ vinkCms.s3 = (function() {
   return {
     init: init,
     upload: upload,
+    imageUpload: imageUpload,
     list: list,
     getObject: getObject,
     headObject: headObject,
