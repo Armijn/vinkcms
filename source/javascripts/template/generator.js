@@ -19,7 +19,6 @@ vinkCms.template = (function() {
   }
 
   function editEntry(container, template) {
-    console.log(template);
     generate(container, template);
     $("h1").append(` - <a target="_blank" href="${vinkCms.s3.getUrlFor(template.meta.slug.val)}">${template.meta.slug.val}</a>`);
   }
@@ -52,14 +51,12 @@ vinkCms.template = (function() {
     let entryJson = JSON.stringify(vinkCms.jsonProcessor.generate(entry));
     let meta = JSON.stringify(vinkCms.jsonProcessor.generateMeta(entry));
     let html = vinkCms.htmlProcessor.generate(entry);
-    console.log(entry);
     uploadEntry(html, entryJson, meta);
   }
 
   function uploadEntry(html, entryJson, meta) {
     let siteBucket = vinkCms.s3.getSiteBucket();
     let dataBucket = vinkCms.s3.getDataBucket();
-    console.log(entryJson)
     vinkCms.uploadHandler.upload({
       html: { Key: entry.meta.slug.val, Body: html },
       entry: { Key: entry.meta.slug.val, Body: entryJson },

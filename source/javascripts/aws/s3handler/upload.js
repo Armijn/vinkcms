@@ -15,9 +15,6 @@ vinkCms.uploadHandler = (function() {
     let entryParams = vinkCms.params.getDataParams(data.entry);
     metaParams = vinkCms.params.getMetaParams(data.meta);
 
-    console.log(htmlParams);
-    console.log(entryParams);
-    console.log(metaParams);
     callback = cb;
     requestSize = 3;
     currentRequest = 0;
@@ -28,16 +25,13 @@ vinkCms.uploadHandler = (function() {
   }
 
   function retrieveMetaJson(params) {
-    console.log(METADATAKEY);
     vinkCms.s3.headObject(vinkCms.s3.getSiteBucket(), METADATAKEY, onHead);
   }
 
   function onHead(err, data) {
     if (err && err.code === "NotFound") {
-      console.log("not found");
       createNewMetaObject();
     } else {
-      console.log("found");
       vinkCms.s3.getObject(vinkCms.s3.getSiteBucket(), METADATAKEY, updateExisting);
     }
   }
@@ -49,8 +43,6 @@ vinkCms.uploadHandler = (function() {
 
   function updateExisting(data) {
     let itemToUpdate = JSON.parse(metaParams.Body);
-    console.log(itemToUpdate);
-    console.log(itemToUpdate[metaParams.slug]);
     data[metaParams.slug] = itemToUpdate[metaParams.slug];
     metaParams.Body = JSON.stringify(data);
     delete metaParams.slug;

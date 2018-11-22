@@ -2,7 +2,7 @@ vinkCms.cmsUI = (function() {
 
   function init() {
     $(function() {
-      vinkCms.navigator.setupNav($(".js-new-items"), onNavClick);
+      vinkCms.navigator.setupNav($(".js-new-items"), newEntry);
       vinkCms.s3.list(vinkCms.s3.getDataBucket(), onRetievedList);
 
       $("form").on("submit", function(e) {
@@ -50,21 +50,19 @@ function onItemPreview(slug) {
 }
 
 function showPreview() {
-  $(".js-content").addClass("preview").removeClass("edit");
+  $(".js-content").addClass("preview").removeClass("edit").removeClass("new");
 }
 
 function showEdit() {
-  $(".js-content").addClass("edit").removeClass("preview");
+  $(".js-content").addClass("edit").removeClass("preview").removeClass("new");
 }
 
-function onNavClick(templateId) {
-  showEdit();
-  vinkCms.template.newEntry($(".form-container"), vinkCms.templates[templateId]);
+function showNew() {
+  $(".js-content").addClass("new").removeClass("preview").removeClass("edit");
 }
 
 function onEntryDelete() {
-  history.pushState("", "", "");
-  location.reload();
+  window.location.href = "/";
 }
 
 function onEntryUploaded(data) {
@@ -76,6 +74,11 @@ function onRetievedList(list) {
     let link = $(`<a href="#${listItem.slug}">${listItem.slug}</a>`)
     $(".list").append(link);
   });
+}
+
+function newEntry(templateId) {
+  showNew();
+  vinkCms.template.newEntry($(".form-container"), vinkCms.templates[templateId]);
 }
 
 function editEntry(slug) {

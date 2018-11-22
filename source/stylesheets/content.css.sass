@@ -18,6 +18,10 @@
       color: #FFFFFF
       display: none
 
+  .entry,
+  .preview
+    display: none
+
   &.preview
     .entry
       display: none
@@ -27,6 +31,17 @@
       .edit,
       .delete
         display: inline-block
+      .back
+        display: none
+
+  &.new
+    .entry
+      display: block
+    .preview
+      display: none
+    .actions
+      .edit,
+      .delete,
       .back
         display: none
 
