@@ -2,8 +2,13 @@ vinkCms.cmsUI = (function() {
 
   function init() {
     $(function() {
-      vinkCms.template.setupNav($(".js-new-items"), onNavClick);
+      vinkCms.navigator.setupNav($(".js-new-items"), onNavClick);
       vinkCms.s3.list(vinkCms.s3.getDataBucket(), onRetievedList);
+
+      $("form").on("submit", function(e) {
+        e.preventDefault();
+        vinkCms.template.processEntry();
+      });
     });
   }
 
@@ -13,7 +18,7 @@ vinkCms.cmsUI = (function() {
 }());
 
 function onNavClick(templateId) {
-  vinkCms.template.newEntry($(".entry"), vinkCms.templates[templateId]);
+  vinkCms.template.newEntry($(".form-container"), vinkCms.templates[templateId]);
 }
 
 function onEntryUploaded() {
@@ -37,5 +42,5 @@ function editEntry(slug) {
 }
 
 function onEntryReceived(entry) {
-  vinkCms.template.editEntry($(".entry"), entry);
+  vinkCms.template.editEntry($(".form-container"), entry);
 }

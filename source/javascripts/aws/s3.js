@@ -42,7 +42,7 @@ vinkCms.s3 = (function() {
       data.Contents.forEach(function(element) {
         list.push({
           slug: element.Key,
-          url: getUrlFor(bucket, element.Key)
+          url: getUrlFor(element.Key)
         });
       });
       callback(list);
@@ -58,8 +58,8 @@ vinkCms.s3 = (function() {
     });
   }
 
-  function getUrlFor(bucket, key) {
-    return `http://${bucket}.s3-website.${AWS.config.region}.amazonaws.com/${key}`;
+  function getUrlFor(key) {
+    return `http://${siteBucket}.s3-website.${AWS.config.region}.amazonaws.com/${key}.html`;
   }
 
   function isError(err) {
@@ -84,6 +84,7 @@ vinkCms.s3 = (function() {
     list: list,
     getObject: getObject,
     getDataBucket: getDataBucket,
-    getSiteBucket: getSiteBucket
+    getSiteBucket: getSiteBucket,
+    getUrlFor: getUrlFor
   };
 }());
