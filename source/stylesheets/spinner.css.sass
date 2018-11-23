@@ -1,0 +1,27 @@
+.spinner
+  position: absolute
+  display: none
+  position: absolute
+  top: 0
+  width: 100vw
+  height: 100vh
+  display: none
+  z-index: 11
+  background-color: rgba(0, 0, 0, 0.8)
+
+  &.active
+    display: block
+
+  .spinner-container
+    position: relative
+    max-width: 500px
+    top: 35%
+    width: 100%
+    margin: 0 auto
+    text-align: center
+    transform: translateY(-50%)
+
+  label
+    display: block
+    font-size: 20px
+    color: #FFFFFF

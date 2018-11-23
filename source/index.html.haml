@@ -28,3 +28,18 @@ title: VinkCms login
         %input.save{type: "submit", value: "Save"}
     .preview.js-preview
       %iframe
+
+.image-picker-container.js-image-picker
+  .selector-container
+    .close.js-close-image-picker ×
+    .image-container
+      %select.image-picker.show-html
+    .image-actions
+      %input.image-upload{accept: "image/png, image/jpeg", name: "image", type: "file"}
+      %input.js-select-image{type: "submit", value: "Select"}
+      %input.js-delete-image{type: "submit", value: "Delete"}
+
+.spinner
+  .spinner-container
+    %img{src: "images/spinner.svg"}
+    %label Loading...
