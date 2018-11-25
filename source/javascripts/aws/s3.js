@@ -44,8 +44,8 @@ vinkCms.s3 = (function() {
       let list = [];
       data.Contents.forEach(function(element) {
         list.push({
-          slug: element.Key,
-          url: getUrlFor(element.Key)
+          Key: element.Key,
+          Location: getUrlFor(element.Key)
         });
       });
       callback(list);

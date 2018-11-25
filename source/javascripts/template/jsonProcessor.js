@@ -6,6 +6,7 @@ vinkCms.jsonProcessor = (function() {
     entry.meta.slug.val = entry.meta.slug.reference.val();
     entry.content.forEach(function(contentBlock) {
       contentBlock.val = contentBlock.reference.val();
+      contentBlock.html = contentBlock.reference.html();
       delete contentBlock.reference;
     });
 

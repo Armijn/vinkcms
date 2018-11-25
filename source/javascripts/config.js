@@ -34,6 +34,11 @@ let vinkCms = {
         {
           type: "markDownTextArea",
           class: "main-content",
+          img: {
+            orgsize: { width: 1536, height: 1536 },
+            srcset: ["384w", "768w", "1536w"],
+            sizes: "(min-width: 768px) 768px, 100vw"
+          },
           attr: { placeholder: "Main content", required: true }
         },
         {

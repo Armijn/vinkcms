@@ -18,20 +18,9 @@ vinkCms.htmlProcessor = (function() {
     let contentHtml = "";
     content.forEach(function(contentBlock) {
       contentHtml += `
-        <div class="${contentBlock.class}">${getHtml(contentBlock)}</div>`;
+        <div class="${contentBlock.class}">${contentBlock.html}</div>`;
     });
     return contentHtml;
-  }
-
-  function getHtml(contentBlock) {
-    switch (contentBlock.type) {
-      case "markDownTextArea":
-        let conv = new showdown.Converter({metadata: true});
-        return conv.makeHtml(contentBlock.val);
-        break;
-      default:
-        return contentBlock.val;
-    }
   }
 
   return {

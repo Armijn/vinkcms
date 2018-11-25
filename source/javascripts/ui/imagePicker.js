@@ -1,5 +1,9 @@
 vinkCms.imagePicker = (function() {
-  function open(callback) {
+  let imgParams;
+  let images;
+  function open(callback, params) {
+    imgParams = params;
+    images = {};
     $(".js-image-picker").addClass("active");
     $(".image-picker").empty();
     $(".image-upload").on("change", function() {
@@ -11,10 +15,9 @@ vinkCms.imagePicker = (function() {
     });
 
     $(".js-select-image").on("click", function() {
-      let url = $(".image-picker option:selected").text();
-      let fileName = $(".image-picker").val().replace("images/", "");
+      let url = images[$(".image-picker").val()].getUrl();
       close();
-      callback(fileName, url);
+      callback(url);
     });
 
     $(".js-delete-image").on("click", function() {
@@ -28,32 +31,81 @@ vinkCms.imagePicker = (function() {
     vinkCms.s3.list("images/", vinkCms.s3.getSiteBucket(), onImagesRecieved);
   }
 
-  function onDelete(data) {
-    $(`.js-image-picker option[value="${data.Deleted[0].Key}"]`).remove();
-    $(".image-picker").imagepicker();
-  }
-
   function close() {
     $(".js-image-picker").removeClass("active");
   }
 
   function onImagesRecieved(data) {
-    let imagePicker = $(".image-picker");
     data.forEach(function(element) {
-      addNewItem(imagePicker, element.slug, element.url);
+      addItem(element);
     });
-    $(".image-picker").imagepicker();
+    reloadImagePicker();
   }
 
-  function addNewItem(container, name, url) {
-    container.append(`<option data-img-src="${url}" value="${name}">${url}</option>`);
+  function addItem(element) {
+    let extension = element.Key.split(".").pop();
+    let test = element.Key.replace(`.${element.Key.split(".").pop()}`, "");
+    let id = element.Key.split(".")[0];
+    let imageSize = test.split(".").pop();
+    images[id] = images[id] || {
+      id: id,
+      srcset: [],
+      thumb: vinkCms.s3.getUrlFor(`${id}.thumb.${extension}`),
+      getUrl: function functionName() {
+        return `/${this.id}.${this.srcset.join(".")}.${extension}`;
+      },
+      getOption: function() {
+        return `<option data-img-src="${this.thumb}" value="${this.id}">${this.id}</option>`;
+      }
+    };
+    if(imageSize !== "thumb") images[id].srcset.push(imageSize);
+  }
+
+  function reloadImagePicker() {
+    let imagePicker = $(".image-picker").empty();
+    Object.values(images).forEach(function(element) {
+      if(shouldBeVisible(element)) {
+        imagePicker.append(element.getOption());
+      }
+    });
+    imagePicker.imagepicker();
+  }
+
+  function shouldBeVisible(element) {
+    if(!imgParams) return true;
+    return imgParams.srcset.every(val => element.srcset.includes(val));
+  }
+
+  function onDelete(data) {
+    images.forEach(function(element) {
+      if(data.Deleted[0].Key === element.Key) images.splice(images.indexOf(element), 1);
+    });
+    reloadImagePicker();
   }
 
   function onImageSelected(element) {
-    if(file === undefined) return;
     let file = element[0].files[0];
+    if(file === undefined) return;
+    vinkCms.resizeHelper.resize(imgParams, file, onImageResized);
+  }
+
+  function onImageResized(files) {
+    if(imgParams) {
+      if (files.length-1 != imgParams.srcset.length)
+        return alert(`Could not resize, please check if the image size width is minimal ${imgParams.orgsize.width}px x ${imgParams.orgsize.height}px`);
+    } else {
+      if (files.length != 2) {
+        return alert(`Something went wrong resizing`);
+      }
+    }
+    files.forEach(function(file) {
+      upload(file);
+    });
+  }
+
+  function upload(file) {
     let params = {
-      Key: `images/${file.name.replace(/\s|\\|\/|\(|\)/g,'-')}`,
+      Key: `images/${file.fileName}`,
       Body: file,
       ContentType: file.type
     }
@@ -61,11 +113,8 @@ vinkCms.imagePicker = (function() {
   }
 
   function onImageUploaded(data) {
-    let imagePicker = $(".image-picker");
-    let fileName = data.Key.replace("images/", "");
-    let url = data.Location;
-    addNewItem(imagePicker, fileName, url);
-    imagePicker.imagepicker();
+    addItem(data);
+    reloadImagePicker();
     $(".thumbnails li img").last().trigger("click");
     $(".image-container").scrollTop($(".image-container").prop("scrollHeight"));
   }

@@ -14,17 +14,22 @@ vinkCms.modules.markDownTextArea = (function() {
     contentBlock.reference = this;
 
     $(".fa-picture-o").on("click", function() {
-      vinkCms.imagePicker.open(onImageSelected);
+      vinkCms.imagePicker.open(onImageSelected, contentBlock.img);
     });
   }
 
-  function onImageSelected(fileName, url) {
-    let replaced = item.value().replace("![](http://)", `![${fileName}](${url})`);
+  function onImageSelected(url) {
+    let replaced = item.value().replace("![](http://)", `![](${url})`);
     item.value(replaced);
   }
 
   function val() {
     return item.value();
+  }
+
+  function html() {
+    let conv = new showdown.Converter({metadata: true});
+    return conv.makeHtml(item.value());
   }
 
   function json() {
@@ -34,6 +39,7 @@ vinkCms.modules.markDownTextArea = (function() {
   return {
     generate: generate,
     val: val,
-    json: json
+    json: json,
+    html: html
   };
 });

@@ -16,6 +16,10 @@ vinkCms.modules.textArea = (function() {
     return item.val();
   }
 
+  function html() {
+    return val();
+  }
+
   function json() {
     return { [cb.name]: val() }
   }
@@ -23,6 +27,7 @@ vinkCms.modules.textArea = (function() {
   return {
     generate: generate,
     val: val,
-    json: json
+    json: json,
+    html: html
   };
 });

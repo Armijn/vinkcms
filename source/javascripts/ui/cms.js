@@ -72,7 +72,7 @@ function onEntryUploaded(data) {
 
 function onRetievedList(list) {
   list.forEach(function(listItem) {
-    let link = $(`<a href="#${listItem.slug}">${listItem.slug}</a>`)
+    let link = $(`<a href="#${listItem.Key}">${listItem.Key}</a>`)
     $(".list").append(link);
   });
 }
