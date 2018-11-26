@@ -29,7 +29,8 @@ vinkCms.modules.markDownTextArea = (function() {
 
   function html() {
     let conv = new showdown.Converter({metadata: true});
-    return conv.makeHtml(item.value());
+    let html = conv.makeHtml(item.value());
+    return vinkCms.imageHelper.convertImagesToSrcSet(html, cb.img);
   }
 
   function json() {

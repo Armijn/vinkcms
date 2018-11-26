@@ -1,4 +1,4 @@
-vinkCms.resizeHelper = (function() {
+vinkCms.imageHelper = (function() {
   let files;
   let callback;
   let file;
@@ -40,7 +40,6 @@ vinkCms.resizeHelper = (function() {
   function resizeImage(file, w, h, fileName, isLast) {
     ImageTools.resize(file, { width: w, height: h },
       function(resized, didItResize) {
-        console.log(didItResize)
         if(!didItResize) return;
         resized.fileName = fileName;
         files.push(resized);
@@ -49,7 +48,40 @@ vinkCms.resizeHelper = (function() {
     );
   }
 
+  function convertImagesToSrcSet(html, imgParams) {
+    if(!imgParams) return html;
+    var images = html.match(/<img.*\/>/mg);
+    images.forEach(function(imageTag) {
+      let convertedImageTag = convertImageTag(imageTag, imgParams);
+      html = html.replace(imageTag, convertedImageTag);
+    });
+    console.log(html);
+    return html;
+  }
+
+  function convertImageTag(imageTag, imgParams) {
+    let image = $(imageTag);
+    let slug = image.attr("src");
+    let extensions = slug.split(".");
+    let extension = extensions.splice(-1, 1);
+    let id = slug.split(".")[0];
+    let srcset = "";
+    image.removeAttr("src");
+    extensions.shift();
+
+    extensions.forEach(function(size) {
+      srcset += `${id}.${size}.${extension} ${size}, `;
+    });
+    srcset = srcset.slice(0, -1);
+
+    image.attr("srcset", srcset);
+    image.attr("sizes", imgParams.sizes);
+
+    return image[0].outerHTML;
+  }
+
   return {
-    resize: resize
+    resize: resize,
+    convertImagesToSrcSet: convertImagesToSrcSet
   };
 }());

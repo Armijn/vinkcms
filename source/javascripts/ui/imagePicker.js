@@ -52,13 +52,18 @@ vinkCms.imagePicker = (function() {
       srcset: [],
       thumb: vinkCms.s3.getUrlFor(`${id}.thumb.${extension}`),
       getUrl: function functionName() {
-        return `/${this.id}.${this.srcset.join(".")}.${extension}`;
+        if(!imgParams) {
+          return `/${this.id}.${extension}`;
+        } else {
+          return `/${this.id}.${this.srcset.join(".")}.${extension}`;
+        }
       },
       getOption: function() {
         return `<option data-img-src="${this.thumb}" value="${this.id}">${this.id}</option>`;
       }
     };
-    if(imageSize !== "thumb") images[id].srcset.push(imageSize);
+    if(!imgParams) imageSize = null;
+    if(imageSize !== "thumb" && imageSize != null) images[id].srcset.push(imageSize);
   }
 
   function reloadImagePicker() {
@@ -86,7 +91,7 @@ vinkCms.imagePicker = (function() {
   function onImageSelected(element) {
     let file = element[0].files[0];
     if(file === undefined) return;
-    vinkCms.resizeHelper.resize(imgParams, file, onImageResized);
+    vinkCms.imageHelper.resize(imgParams, file, onImageResized);
   }
 
   function onImageResized(files) {
