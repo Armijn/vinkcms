@@ -3,13 +3,20 @@ vinkCms.template = (function() {
   const DEFAULT_META = {
     title: {
       type: "input",
-      placeholder: "Title",
       attr: { placeholder: "Title", required: true }
     },
     slug: {
       type: "input",
-      placeholder: "Slug",
       attr: { placeholder: "Slug", required: true }
+    },
+    description: {
+      type: "textarea",
+      attr: { placeholder: "description", required: true }
+    },
+    image: {
+      type: "input",
+      isImage: true,
+      attr: { placeholder: "Social image", required: true }
     }
   };
 
@@ -19,8 +26,8 @@ vinkCms.template = (function() {
   }
 
   function editEntry(container, template) {
+    template.oldSlug = template.meta.slug.val;
     generate(container, template);
-    template.meta.oldSlug = template.meta.slug.val;
     $("h1").append(` - <a target="_blank" href="${vinkCms.s3.getUrlFor(template.meta.slug.val)}">${template.meta.slug.val}</a>`);
   }
 
@@ -28,7 +35,7 @@ vinkCms.template = (function() {
     entry = vinkCms.helper.clone(template);
     container.empty();
     container.append(`<h1>${entry.name}</h1>`);
-    addPreDefinedFields($("<fieldset></fieldset>").appendTo(container));
+    addCustomContentBlocks(container, "Metadata", Object.values(template.meta));
     addCustomContentBlocks(container, "JSON", entry.json);
     addCustomContentBlocks(container, "Content", entry.content);
   }
@@ -42,12 +49,6 @@ vinkCms.template = (function() {
     });
   }
 
-  function addPreDefinedFields(container) {
-    container.append(`<h2>Metadata</h2>`);
-    vinkCms.modules["input"]().generate(container, entry.meta.title);
-    vinkCms.modules["input"]().generate(container, entry.meta.slug);
-  }
-
   function processEntry() {
     let entryJson = JSON.stringify(vinkCms.jsonProcessor.generate(entry));
     let meta = JSON.stringify(vinkCms.jsonProcessor.generateMeta(entry));
@@ -57,12 +58,12 @@ vinkCms.template = (function() {
       entry: { Key: entry.meta.slug.val, Body: entryJson },
       meta: { slug: entry.meta.slug.val, Body: meta }
     };
-
-    if(entry.meta.oldSlug == undefined || entry.meta.oldSlug === entry.meta.slug.val) {
+    
+    if(entry.oldSlug == undefined || entry.oldSlug === entry.meta.slug.val) {
       uploadEntry(data);
     } else {
-      renameEntry(entry.meta.oldSlug, data);
-      delete entry.meta.oldSlug;
+      renameEntry(entry.oldSlug, data);
+      delete entry.oldSlug;
     }
   }
 

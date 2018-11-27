@@ -1,33 +1,10 @@
 vinkCms.modules = vinkCms.modules || {};
 vinkCms.modules.input = (function() {
-  const INPUT = `<input type="text"></input>`;
-  let item;
-  let cb;
-
   function generate(container, contentBlock) {
-    item = $(INPUT).appendTo(container);
-    cb = contentBlock;
-    item.attr(contentBlock.attr || "");
-    if(contentBlock.val) item.val(contentBlock.val);
-    contentBlock.reference = this
-  }
-
-  function val() {
-    return item.val();
-  }
-
-  function html() {
-    return val();
-  }
-
-  function json() {
-    return { [cb.name]: val() }
+    return vinkCms.modules.sharedInput().generate(container, contentBlock);
   }
 
   return {
-    generate: generate,
-    val: val,
-    json: json,
-    html: html
+    generate: generate
   };
 });

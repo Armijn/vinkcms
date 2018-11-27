@@ -16,8 +16,9 @@ vinkCms.imagePicker = (function() {
 
     $(".js-select-image").on("click", function() {
       let url = images[$(".image-picker").val()].getUrl();
+      let fullUrl = vinkCms.s3.getUrlFor(url);
       close();
-      callback(url);
+      callback(`/${url}`, fullUrl);
     });
 
     $(".js-delete-image").on("click", function() {
@@ -51,9 +52,9 @@ vinkCms.imagePicker = (function() {
       thumb: vinkCms.s3.getUrlFor(`${id}.thumb.${extension}`),
       getUrl: function functionName() {
         if(!imgParams) {
-          return `/${this.id}.${this.extension}`;
+          return `${this.id}.${this.extension}`;
         } else {
-          return `/${this.id}.${this.srcset.join(".")}.${this.extension}`;
+          return `${this.id}.${this.srcset.join(".")}.${this.extension}`;
         }
       },
       urls: [],

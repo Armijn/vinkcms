@@ -37,7 +37,7 @@ vinkCms.imageHelper = (function() {
     return file.name.split('.').pop();
   }
 
-  function resizeImage(file, w, h, fileName, isLast) {
+  async function resizeImage(file, w, h, fileName, isLast) {
     ImageTools.resize(file, { width: w, height: h },
       function(resized, didItResize) {
         if(!didItResize) return;
@@ -50,7 +50,8 @@ vinkCms.imageHelper = (function() {
 
   function convertImagesToSrcSet(html, imgParams) {
     if(!imgParams) return html;
-    var images = html.match(/<img.*\/>/mg);
+    let images = html.match(/<img.*\/>/mg);
+    if(!images) return html;
     images.forEach(function(imageTag) {
       let convertedImageTag = convertImageTag(imageTag, imgParams);
       html = html.replace(imageTag, convertedImageTag);

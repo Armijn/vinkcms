@@ -5,7 +5,7 @@ vinkCms.modules.markDownTextArea = (function() {
   let cb;
 
   function generate(container, contentBlock) {
-    container.append(MARKDOWN);
+    let markdownContainer = $(MARKDOWN).appendTo(container);
     cb = contentBlock;
     item = new SimpleMDE({
       element: $(".js-markdown")[0]
@@ -13,7 +13,7 @@ vinkCms.modules.markDownTextArea = (function() {
     if(contentBlock.val) item.value(contentBlock.val);
     contentBlock.reference = this;
 
-    $(".fa-picture-o").on("click", function() {
+    markdownContainer.find(".fa-picture-o").on("click", function() {
       vinkCms.imagePicker.open(onImageSelected, contentBlock.img);
     });
   }

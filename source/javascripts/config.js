@@ -3,11 +3,7 @@ let vinkCms = {
   templates: [
     {
       name: "My template",
-      meta: {
-        twitter: {
-          type: "input"
-        }
-      },
+      siteUrl: "https://example.com",
       json: [
         {
           type: "input",
@@ -35,14 +31,14 @@ let vinkCms = {
           type: "markDownTextArea",
           class: "main-content",
           img: {
-            orgsize: { width: 1536, height: 1536 },
-            srcset: ["384w", "768w", "1536w"],
+            orgsize: { width: 786, height: 786 },
+            srcset: ["384w", "768w"],
             sizes: "(min-width: 768px) 768px, 100vw"
           },
           attr: { placeholder: "Main content", required: true }
         },
         {
-          type: "textArea",
+          type: "textarea",
           class: "other-block"
         },
         {
