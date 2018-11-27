@@ -21,11 +21,8 @@ vinkCms.imagePicker = (function() {
     });
 
     $(".js-delete-image").on("click", function() {
-      let params = {
-        Bucket: vinkCms.s3.getSiteBucket(),
-        Key: $(".image-picker").val()
-      }
-      vinkCms.s3.deleteObject(params, onDelete);
+      let urls = images[$(".image-picker").val()].urls;
+      vinkCms.s3.deleteObjects(vinkCms.s3.getSiteBucket(), urls, onDelete);
     });
 
     vinkCms.s3.list("images/", vinkCms.s3.getSiteBucket(), onImagesRecieved);
@@ -50,20 +47,23 @@ vinkCms.imagePicker = (function() {
     images[id] = images[id] || {
       id: id,
       srcset: [],
+      extension: extension,
       thumb: vinkCms.s3.getUrlFor(`${id}.thumb.${extension}`),
       getUrl: function functionName() {
         if(!imgParams) {
-          return `/${this.id}.${extension}`;
+          return `/${this.id}.${this.extension}`;
         } else {
-          return `/${this.id}.${this.srcset.join(".")}.${extension}`;
+          return `/${this.id}.${this.srcset.join(".")}.${this.extension}`;
         }
       },
+      urls: [],
       getOption: function() {
         return `<option data-img-src="${this.thumb}" value="${this.id}">${this.id}</option>`;
       }
     };
     if(!imgParams) imageSize = null;
     if(imageSize !== "thumb" && imageSize != null) images[id].srcset.push(imageSize);
+    images[id].urls.push(element.Key);
   }
 
   function reloadImagePicker() {
@@ -77,14 +77,13 @@ vinkCms.imagePicker = (function() {
   }
 
   function shouldBeVisible(element) {
+    if(!imgParams && element.urls.length > 2) return false;
     if(!imgParams) return true;
     return imgParams.srcset.every(val => element.srcset.includes(val));
   }
 
   function onDelete(data) {
-    images.forEach(function(element) {
-      if(data.Deleted[0].Key === element.Key) images.splice(images.indexOf(element), 1);
-    });
+    delete images[data.Deleted[0].Key.split(".")[0]];
     reloadImagePicker();
   }
 
