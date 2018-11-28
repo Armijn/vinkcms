@@ -21,4 +21,4 @@ vinkCms.queue = (function() {
     add: add,
     go: go
   };
-}());
+});

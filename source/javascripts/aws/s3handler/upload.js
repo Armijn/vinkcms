@@ -6,16 +6,18 @@ vinkCms.uploadHandler = (function() {
   const METADATAPARAMS = { Key: METADATAKEY };
   let metaParams;
   let callback;
+  let queue;
 
   function upload(params) {
     let data = params.data
     let htmlParams = vinkCms.params.getHtmlParams(data.html);
     let entryParams = vinkCms.params.getDataParams(data.entry);
+    queue = vinkCms.queue();
     metaParams = vinkCms.params.getMetaParams(data.meta);
     callback = params.callback;
 
-    vinkCms.queue.add(vinkCms.s3.upload, htmlParams);
-    vinkCms.queue.add(vinkCms.s3.upload, entryParams);
+    queue.add(vinkCms.s3.upload, htmlParams);
+    queue.add(vinkCms.s3.upload, entryParams);
     vinkCms.s3.headObject(vinkCms.s3.getSiteBucket(), METADATAKEY, vinkCms.uploadHandler.onHead);
   }
 
@@ -41,8 +43,8 @@ vinkCms.uploadHandler = (function() {
   }
 
   function uploadMeta() {
-    vinkCms.queue.add(vinkCms.s3.upload, metaParams);
-    vinkCms.queue.go(callback);
+    queue.add(vinkCms.s3.upload, metaParams);
+    queue.go(callback);
   }
 
   return {
