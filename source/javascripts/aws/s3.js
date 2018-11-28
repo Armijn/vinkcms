@@ -19,7 +19,6 @@ vinkCms.s3 = (function() {
     });
   }
 
-  // function list(dir, bucket, callback) {
   function list(params) {
     vinkCms.spinner.show("Loading...");
     let newParams = { Bucket: params.Bucket };

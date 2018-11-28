@@ -11,15 +11,15 @@ vinkCms.renameHandler = (function() {
     currentRequest = 0;
     key = data.entry.Key;
     oldKey = oldSlug;
-    vinkCms.uploadHandler.upload(data, vinkCms.renameHandler.onItemUploaded);
+    vinkCms.uploadHandler.upload({data: data, callback: vinkCms.renameHandler.onItemUploaded});
   }
 
   function onItemUploaded() {
-    vinkCms.deleteHandler.deleteObject(oldKey, vinkCms.renameHandler.onDeleteObject);
+    vinkCms.deleteHandler.deleteObject({key: oldKey, callback: vinkCms.renameHandler.onDeleteObject});
   }
 
-  function onDeleteObject() {
-    callback(key);
+  function onDeleteObject(data) {
+    callback({Key: key});
   }
 
   return {

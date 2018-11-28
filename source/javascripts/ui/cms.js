@@ -68,7 +68,7 @@ function onEntryDelete() {
 }
 
 function onEntryUploaded(data) {
-  window.location.href = `#${data}`;
+  window.location.href = `#${data.Key}`;
   location.reload();
 }
 
@@ -89,7 +89,7 @@ function editEntry(slug) {
 }
 
 function deleteEntry(slug) {
-  vinkCms.deleteHandler.deleteObject(slug, onEntryDelete);
+  vinkCms.deleteHandler.deleteObject({key: slug, callback: onEntryDelete});
 }
 
 function onEntryReceived(entry) {

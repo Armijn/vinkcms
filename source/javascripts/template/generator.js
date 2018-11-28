@@ -58,7 +58,7 @@ vinkCms.template = (function() {
       entry: { Key: entry.meta.slug.val, Body: entryJson },
       meta: { slug: entry.meta.slug.val, Body: meta }
     };
-    
+
     if(entry.oldSlug == undefined || entry.oldSlug === entry.meta.slug.val) {
       uploadEntry(data);
     } else {
@@ -68,7 +68,7 @@ vinkCms.template = (function() {
   }
 
   function uploadEntry(data) {
-    vinkCms.uploadHandler.upload(data, onEntryUploaded);
+    vinkCms.uploadHandler.upload({data: data, callback: onEntryUploaded});
   }
 
   function renameEntry(oldSlug, data) {
