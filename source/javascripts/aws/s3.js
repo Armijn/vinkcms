@@ -11,21 +11,17 @@ vinkCms.s3 = (function() {
   }
 
   function upload(params) {
-    vinkCms.spinner.show("Uploading...");
     s3.upload(params, function(err, data) {
-      vinkCms.spinner.hide();
       if(isError(err)) return;
       params.callback(data);
     });
   }
 
   function list(params) {
-    vinkCms.spinner.show("Loading...");
     let newParams = { Bucket: params.Bucket };
     newParams.Delimiter = "/";
     newParams.Prefix = params.Dir;
     s3.listObjectsV2(newParams, function(err, data) {
-      vinkCms.spinner.hide();
       if(isError(err)) return;
       let list = [];
       data.Contents.forEach(function(element) {
@@ -39,33 +35,27 @@ vinkCms.s3 = (function() {
   }
 
   function headObject(bucket, key, callback) {
-    vinkCms.spinner.show("Loading...");
     let params = { Bucket: bucket, Key: key };
     s3.headObject(params, function(err, data) {
-      vinkCms.spinner.hide();
       callback(err, data);
     });
   }
 
   function getObject(bucket, key, callback) {
-    vinkCms.spinner.show("Loading...");
     let params = { Bucket: bucket };
     params.Key = key;
     s3.getObject(params, function(err, data) {
-      vinkCms.spinner.hide();
       if(isError(err)) return;
       callback(JSON.parse(data.Body.toString()));
     });
   }
 
   function deleteObject(params) {
-    vinkCms.spinner.show("Deleting...");
     let newParams = {
       Bucket: params.Bucket,
       Delete: params.Delete
     };
     s3.deleteObjects(newParams, function(err, data) {
-      vinkCms.spinner.hide();
       if(isError(err)) return;
       params.callback(data);
     });

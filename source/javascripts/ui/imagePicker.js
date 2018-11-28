@@ -108,29 +108,31 @@ vinkCms.imagePicker = (function() {
         return alert(`Something went wrong resizing`);
       }
     }
+    let queue = vinkCms.queue();
     files.forEach(function(file) {
-      upload(file);
+      upload(file, queue);
     });
+    queue.go("Uploading...", vinkCms.imagePicker.onImageUploaded);
   }
 
-  function upload(file) {
+  function upload(file, queue) {
     let params = vinkCms.params.getHtmlParams({
         Key: `images/${file.fileName}`,
         Body: file,
         ContentType: file.type
       }, onImageUploaded
     );
-    vinkCms.s3.upload(params);
+    queue.add(vinkCms.s3.upload, params);
   }
 
   function onImageUploaded(data) {
-    addItem(data);
-    reloadImagePicker();
-    $(".thumbnails li img").last().trigger("click");
-    $(".image-container").scrollTop($(".image-container").prop("scrollHeight"));
+    vinkCms.s3.list({
+      Dir: "images/", Bucket: vinkCms.s3.getSiteBucket(), callback: onImagesRecieved
+    });
   }
 
   return {
-    open: open
+    open: open,
+    onImageUploaded: onImageUploaded
   };
 }());

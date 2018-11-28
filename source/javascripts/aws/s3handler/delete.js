@@ -31,7 +31,7 @@ vinkCms.deleteHandler = (function() {
     delete data[key];
     metaParams.Body = JSON.stringify(data);
     queue.add(vinkCms.s3.upload, metaParams);
-    queue.go(callback);
+    queue.go("Deleting...", callback);
   }
 
   return {

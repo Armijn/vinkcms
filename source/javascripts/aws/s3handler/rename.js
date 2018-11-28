@@ -3,7 +3,7 @@ vinkCms.renameHandler = (function() {
     let queue = vinkCms.queue();
     queue.add(vinkCms.uploadHandler.upload, {data: data, callback: vinkCms.renameHandler.onItemUploaded});
     queue.add(vinkCms.deleteHandler.deleteObject, {key: oldKey, callback: vinkCms.renameHandler.onDeleteObject});
-    queue.go(callback);
+    queue.go("Renaming...", callback);
   }
 
   return {

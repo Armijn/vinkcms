@@ -44,7 +44,7 @@ vinkCms.uploadHandler = (function() {
 
   function uploadMeta() {
     queue.add(vinkCms.s3.upload, metaParams);
-    queue.go(callback);
+    queue.go("Uploading...", callback);
   }
 
   return {

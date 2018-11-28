@@ -6,13 +6,17 @@ vinkCms.queue = (function() {
     queue.push({func: toExecFunc, params: params});
   }
 
-  function go(finalCallback) {
+  function go(loadingText, finalCallback) {
+    vinkCms.spinner.show(loadingText);
     callback = finalCallback;
     doNext();
   }
 
   function doNext(data) {
-    if(queue.length == 0) return callback(data);
+    if(queue.length == 0) {
+      vinkCms.spinner.hide();
+      return callback(data);
+    }
     let item = queue.pop();
     item.func(item.params);
   }
