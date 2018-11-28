@@ -22,11 +22,16 @@ vinkCms.imagePicker = (function() {
     });
 
     $(".js-delete-image").on("click", function() {
-      let urls = images[$(".image-picker").val()].urls;
-      vinkCms.s3.deleteObjects(vinkCms.s3.getSiteBucket(), urls, onDelete);
+      let keys = images[$(".image-picker").val()].urls;
+      let params = vinkCms.params.getHtmlParams(
+        vinkCms.params.getDeleteParams(keys), onDelete
+      );
+      vinkCms.s3.deleteObject(params);
     });
 
-    vinkCms.s3.list("images/", vinkCms.s3.getSiteBucket(), onImagesRecieved);
+    vinkCms.s3.list({
+      Dir: "images/", Bucket: vinkCms.s3.getSiteBucket(), callback: onImagesRecieved
+    });
   }
 
   function close() {
@@ -109,12 +114,13 @@ vinkCms.imagePicker = (function() {
   }
 
   function upload(file) {
-    let params = {
-      Key: `images/${file.fileName}`,
-      Body: file,
-      ContentType: file.type
-    }
-    vinkCms.s3.imageUpload(params, onImageUploaded);
+    let params = vinkCms.params.getHtmlParams({
+        Key: `images/${file.fileName}`,
+        Body: file,
+        ContentType: file.type
+      }, onImageUploaded
+    );
+    vinkCms.s3.upload(params);
   }
 
   function onImageUploaded(data) {

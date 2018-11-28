@@ -10,35 +10,22 @@ vinkCms.s3 = (function() {
     siteBucket = params.siteBucket;
   }
 
-  function upload(params, callback) {
+  function upload(params) {
     vinkCms.spinner.show("Uploading...");
     s3.upload(params, function(err, data) {
       vinkCms.spinner.hide();
       if(isError(err)) return;
-      callback(data);
+      params.callback(data);
     });
   }
 
-  function imageUpload(orgParams, callback) {
-    vinkCms.spinner.show("Uploading...");
-    let params = {
-      Bucket: siteBucket,
-      ACL: "public-read"
-    }
-    params = Object.assign(params, orgParams);
-    s3.upload(params, function(err, data) {
-      vinkCms.spinner.hide();
-      if(isError(err)) return;
-      callback(data);
-    });
-  }
-
-  function list(dir, bucket, callback) {
+  // function list(dir, bucket, callback) {
+  function list(params) {
     vinkCms.spinner.show("Loading...");
-    let params = { Bucket: bucket };
-    params.Delimiter = "/";
-    params.Prefix = dir;
-    s3.listObjectsV2(params, function(err, data) {
+    let newParams = { Bucket: params.Bucket };
+    newParams.Delimiter = "/";
+    newParams.Prefix = params.Dir;
+    s3.listObjectsV2(newParams, function(err, data) {
       vinkCms.spinner.hide();
       if(isError(err)) return;
       let list = [];
@@ -48,7 +35,7 @@ vinkCms.s3 = (function() {
           Location: getUrlFor(element.Key)
         });
       });
-      callback(list);
+      params.callback(list);
     });
   }
 
@@ -72,32 +59,16 @@ vinkCms.s3 = (function() {
     });
   }
 
-  function deleteObjects(bucket, objects, callback) {
+  function deleteObject(params) {
     vinkCms.spinner.show("Deleting...");
-    let params = {
-      Bucket: bucket,
-      Delete: { Objects: [] }
+    let newParams = {
+      Bucket: params.Bucket,
+      Delete: params.Delete
     };
-    objects.forEach(function(key) {
-      params.Delete.Objects.push({ Key: key });
-    });
-    s3.deleteObjects(params, function(err, data) {
+    s3.deleteObjects(newParams, function(err, data) {
       vinkCms.spinner.hide();
       if(isError(err)) return;
-      callback(data);
-    });
-  }
-
-  function deleteObject(p, callback) {
-    vinkCms.spinner.show("Deleting...");
-    let params = {
-      Bucket: p.Bucket,
-      Delete: { Objects: [{ Key: p.Key }] }
-    };
-    s3.deleteObjects(params, function(err, data) {
-      vinkCms.spinner.hide();
-      if(isError(err)) return;
-      callback(data);
+      params.callback(data);
     });
   }
 
@@ -123,12 +94,10 @@ vinkCms.s3 = (function() {
   return {
     init: init,
     upload: upload,
-    imageUpload: imageUpload,
     list: list,
     getObject: getObject,
     headObject: headObject,
     deleteObject: deleteObject,
-    deleteObjects: deleteObjects,
     getDataBucket: getDataBucket,
     getSiteBucket: getSiteBucket,
     getUrlFor: getUrlFor

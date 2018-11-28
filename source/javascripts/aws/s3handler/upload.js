@@ -12,22 +12,18 @@ vinkCms.uploadHandler = (function() {
   let key;
 
   function upload(data, cb) {
-    let htmlParams = vinkCms.params.getHtmlParams(data.html);
-    let entryParams = vinkCms.params.getDataParams(data.entry);
+    let htmlParams = vinkCms.params.getHtmlParams(data.html, vinkCms.uploadHandler.onItemUploaded);
+    let entryParams = vinkCms.params.getDataParams(data.entry, vinkCms.uploadHandler.onItemUploaded);
+    metaParams = vinkCms.params.getMetaParams(data.meta, vinkCms.uploadHandler.onItemUploaded);
     key = entryParams.Key;
-    metaParams = vinkCms.params.getMetaParams(data.meta);
 
     callback = cb;
     requestSize = 3;
     currentRequest = 0;
 
-    vinkCms.s3.upload(htmlParams, vinkCms.uploadHandler.onItemUploaded);
-    vinkCms.s3.upload(entryParams, vinkCms.uploadHandler.onItemUploaded);
-    retrieveMetaJson(metaParams);
-  }
-
-  function retrieveMetaJson(params) {
-    vinkCms.s3.headObject(vinkCms.s3.getSiteBucket(), METADATAKEY, onHead);
+    vinkCms.s3.upload(htmlParams);
+    vinkCms.s3.upload(entryParams);
+    vinkCms.s3.headObject(vinkCms.s3.getSiteBucket(), METADATAKEY, vinkCms.uploadHandler.onHead);
   }
 
   function onHead(err, data) {
@@ -40,7 +36,7 @@ vinkCms.uploadHandler = (function() {
 
   function createNewMetaObject() {
     delete metaParams.slug;
-    vinkCms.s3.upload(metaParams, vinkCms.uploadHandler.onItemUploaded);
+    vinkCms.s3.upload(metaParams);
   }
 
   function updateExisting(data) {
@@ -48,7 +44,7 @@ vinkCms.uploadHandler = (function() {
     data[metaParams.slug] = itemToUpdate[metaParams.slug];
     metaParams.Body = JSON.stringify(data);
     delete metaParams.slug;
-    vinkCms.s3.upload(metaParams, vinkCms.uploadHandler.onItemUploaded);
+    vinkCms.s3.upload(metaParams);
   }
 
   function onItemUploaded() {
@@ -58,6 +54,7 @@ vinkCms.uploadHandler = (function() {
 
   return {
     upload: upload,
-    onItemUploaded: onItemUploaded
+    onItemUploaded: onItemUploaded,
+    onHead: onHead
   };
 }());

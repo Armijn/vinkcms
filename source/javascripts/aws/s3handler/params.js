@@ -5,26 +5,29 @@ vinkCms.params = (function() {
   const PUBLICPARAMS = { ACL: "public-read" };
   const METADATAPARAMS = { Key: METADATAKEY };
 
-  function getHtmlParams(params) {
+  function getHtmlParams(params, callback) {
     return Object.assign(
       params,
+      { callback: callback },
       { Bucket: vinkCms.s3.getSiteBucket() },
       HTMLTYPEPARAMS,
       PUBLICPARAMS
     );
   }
 
-  function getDataParams(params) {
+  function getDataParams(params, callback) {
     return Object.assign(
       params,
+      { callback: callback },
       { Bucket: vinkCms.s3.getDataBucket() },
       HTMLTYPEPARAMS
     );
   }
 
-  function getMetaParams(params) {
+  function getMetaParams(params, callback) {
     return Object.assign(
       params,
+      { callback: callback },
       { Bucket: vinkCms.s3.getSiteBucket() },
       JSONTYPEPARAMS,
       PUBLICPARAMS,
@@ -32,9 +35,18 @@ vinkCms.params = (function() {
     );
   }
 
+  function getDeleteParams(keys) {
+    let objects = [];
+    keys.forEach(function(key) {
+      objects.push({Key: key});
+    });
+    return { Delete: { Objects: objects } };
+  }
+
   return {
     getHtmlParams: getHtmlParams,
     getDataParams: getDataParams,
-    getMetaParams: getMetaParams
+    getMetaParams: getMetaParams,
+    getDeleteParams: getDeleteParams
   };
 }());

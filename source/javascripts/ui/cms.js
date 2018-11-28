@@ -3,7 +3,9 @@ vinkCms.cmsUI = (function() {
   function init() {
     $(function() {
       vinkCms.navigator.setupNav($(".js-new-items"), newEntry);
-      vinkCms.s3.list("", vinkCms.s3.getDataBucket(), onRetievedList);
+      vinkCms.s3.list({
+        Dir: "", Bucket: vinkCms.s3.getDataBucket(), callback: onRetievedList
+      });
 
       $("form").on("submit", function(e) {
         e.preventDefault();
