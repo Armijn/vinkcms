@@ -12,7 +12,7 @@ vinkCms.cmsUI = (function() {
         vinkCms.template.processEntry();
       });
 
-      $(window).bind('hashchange', function() {
+      $(window).bind("hashchange", function() {
         let slug = window.location.hash.replace("#", "");
         onItemPreview(slug);
       });
@@ -48,7 +48,7 @@ vinkCms.cmsUI = (function() {
 function onItemPreview(slug) {
   showPreview();
   $(".js-edit-entry-item").attr("id", slug);
-  $(".js-preview iframe").attr('src', vinkCms.s3.getUrlFor(slug));
+  $(".js-preview iframe").attr("src", vinkCms.s3.getUrlFor(slug));
 }
 
 function showPreview() {

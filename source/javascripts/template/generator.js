@@ -44,8 +44,16 @@ vinkCms.template = (function() {
     if(!items) return;
     let fieldSet = $("<fieldset></fieldset>").appendTo(container);
     fieldSet.append(`<h2>${name}</h2>`);
+    addContents(fieldSet, items);
+  }
+
+  function addContents(container, items) {
     items.forEach(function(contentBlock) {
-      vinkCms.modules[contentBlock.type]().generate(fieldSet, contentBlock);
+      if(contentBlock.content) {
+        addContents(container, contentBlock.content);
+      } else {
+        vinkCms.modules[contentBlock.type]().generate(container, contentBlock);
+      }
     });
   }
 

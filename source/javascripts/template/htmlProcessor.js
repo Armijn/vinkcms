@@ -22,19 +22,41 @@ vinkCms.htmlProcessor = (function() {
     metaString += `<meta property="og:description" content="${meta.description.val}" />`;
     metaString += `<meta property="og:image" content="${entry.siteUrl}${meta.image.val}" />`;
     metaString += `<meta property="og:url" content="${entry.siteUrl}${meta.image.val}" />`;
+    metaString += `<link rel="stylesheet" href="${entry.css}">`
     return metaString;
   }
 
   function generateContent(content) {
-    let contentHtml = "";
-    content.forEach(function(contentBlock) {
-      contentHtml += `
-        <div class="${contentBlock.class}">${contentBlock.html}</div>`;
-    });
+    let contentHtml = getContentContainer(content, "");
+    console.log(contentHtml);
     return contentHtml;
   }
 
+  function getContentContainer(content, html) {
+    content.forEach(function(contentBlock) {
+      if(contentBlock.content) {
+        html += getContentHtml(contentBlock.containerAttr);
+        html += getContentContainer(contentBlock.content, "");
+        html += "</div>";
+      } else {
+        html += getContentBlockHtml(contentBlock);
+      }
+    });
+    return html;
+  }
+
+  function getContentHtml(containerAttr) {
+    let attributes = vinkCms.helper.attrToString(containerAttr);
+    return `<div ${attributes}">`;
+  }
+
+  function getContentBlockHtml(contentBlock) {
+    let attributes = vinkCms.helper.attrToString(contentBlock.containerAttr);
+    return `<div ${attributes}">${contentBlock.html}</div>`;
+  }
+
   return {
-    generate: generate
+    generate: generate,
+    generateContent: generateContent
   };
 }());

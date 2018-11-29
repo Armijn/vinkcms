@@ -8,6 +8,15 @@ vinkCms.helper = (function() {
       return copy;
   }
 
+  function attrToString(containerAttr) {
+    let stringAttr = "";
+    console.log(containerAttr);
+    Object.keys(containerAttr).forEach(function(key) {
+      stringAttr += `${key}=${containerAttr[key]} `;
+    });
+    return stringAttr;
+  }
+
   function insertAtCaret(item, text) {
     let txtarea = item[0];
     if (!txtarea) {
@@ -49,6 +58,7 @@ vinkCms.helper = (function() {
 
   return {
     clone: clone,
-    insertAtCaret: insertAtCaret
+    insertAtCaret: insertAtCaret,
+    attrToString: attrToString
   };
 }());
