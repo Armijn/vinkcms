@@ -8,7 +8,7 @@ vinkCms.modules.markDownTextArea = (function() {
     let markdownContainer = $(MARKDOWN).appendTo(container);
     cb = contentBlock;
     item = new SimpleMDE({
-      element: $(".js-markdown")[0]
+      element: markdownContainer.find(".js-markdown")[0]
     });
     if(contentBlock.val) item.value(contentBlock.val);
     contentBlock.reference = this;

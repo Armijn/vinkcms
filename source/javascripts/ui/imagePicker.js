@@ -34,7 +34,15 @@ vinkCms.imagePicker = (function() {
     });
   }
 
+  function removeAllListeners() {
+    $(".js-close-image-picker").off();
+    $(".js-select-image").off();
+    $(".js-delete-image").off();
+    $(".image-upload").off();
+  }
+
   function close() {
+    removeAllListeners();
     $(".js-image-picker").removeClass("active");
   }
 
