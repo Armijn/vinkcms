@@ -4,14 +4,20 @@ vinkCms.modules.markDownTextArea = (function() {
   let item;
   let cb;
 
-  function generate(container, contentBlock) {
+  function generate(container, contentBlock, isPreview) {
     let markdownContainer = $(MARKDOWN).appendTo(container);
+    if(contentBlock.label) {
+      let label = $(`<label>${contentBlock.label}</label>`).appendTo(container);
+      markdownContainer.appendTo(label);
+    }
     cb = contentBlock;
     item = new SimpleMDE({
       element: markdownContainer.find(".js-markdown")[0],
       previewRender: function(html) {
-        contentBlock.html = contentBlock.reference.html();
-        return vinkCms.htmlProcessor.generateContent([contentBlock]);
+        contentBlock.html = contentBlock.reference.html(true);
+        html = `<link href="${contentBlock.css}" rel="stylesheet">`;
+        html += vinkCms.htmlProcessor.generateContent([contentBlock]);
+        return html;
       }
     });
     if(contentBlock.val) item.value(contentBlock.val);
@@ -31,14 +37,14 @@ vinkCms.modules.markDownTextArea = (function() {
     return item.value();
   }
 
-  function html() {
+  function html(preview) {
     let conv = new showdown.Converter({metadata: true});
     let html = conv.makeHtml(item.value());
-    return vinkCms.imageHelper.convertImagesToSrcSet(html, cb.img);
+    return vinkCms.imageHelper.convertImagesToSrcSet(html, cb.img, preview);
   }
 
   function json() {
-    return { [cb.name]: val() }
+    return { [cb.name]: html() }
   }
 
   return {

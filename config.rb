@@ -17,6 +17,7 @@ activate :directory_indexes
 page '/*.json', layout: false
 
 configure :build do
+  require "uglifier"
   activate :minify_css
-  activate :minify_javascript
+  activate :minify_javascript, compressor: -> { Uglifier.new(:harmony => true) }
 end

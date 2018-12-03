@@ -60,18 +60,18 @@ vinkCms.imageHelper = (function() {
     );
   }
 
-  function convertImagesToSrcSet(html, imgParams) {
+  function convertImagesToSrcSet(html, imgParams, preview) {
     if(!imgParams) return html;
     let images = html.match(/<img.*\/>/mg);
     if(!images) return html;
     images.forEach(function(imageTag) {
-      let convertedImageTag = convertImageTag(imageTag, imgParams);
+      let convertedImageTag = convertImageTag(imageTag, imgParams, preview);
       html = html.replace(imageTag, convertedImageTag);
     });
     return html;
   }
 
-  function convertImageTag(imageTag, imgParams) {
+  function convertImageTag(imageTag, imgParams, preview) {
     let image = $(imageTag);
     let slug = image.attr("src");
     let extensions = slug.split(".");
@@ -82,7 +82,9 @@ vinkCms.imageHelper = (function() {
     extensions.shift();
 
     extensions.forEach(function(size) {
-      srcset += `${id}.${size}.${extension} ${size}, `;
+      let link = `${id}.${size}.${extension} ${size}`
+      if(preview) link = vinkCms.s3.getUrlFor(link.slice(1));
+      srcset += `${link}, `;
     });
     srcset = srcset.slice(0, -1);
 

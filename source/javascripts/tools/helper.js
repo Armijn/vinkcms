@@ -10,9 +10,8 @@ vinkCms.helper = (function() {
 
   function attrToString(containerAttr) {
     let stringAttr = "";
-    console.log(containerAttr);
     Object.keys(containerAttr).forEach(function(key) {
-      stringAttr += `${key}=${containerAttr[key]} `;
+      stringAttr += `${key}="${containerAttr[key]}" `;
     });
     return stringAttr;
   }

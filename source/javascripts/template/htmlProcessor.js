@@ -1,6 +1,6 @@
 vinkCms.htmlProcessor = (function() {
 
-  function generate(entry) {
+  function generate(entry, forPreview) {
     return `
       <!DOCTYPE html>
       <html>
@@ -23,12 +23,13 @@ vinkCms.htmlProcessor = (function() {
     metaString += `<meta property="og:image" content="${entry.siteUrl}${meta.image.val}" />`;
     metaString += `<meta property="og:url" content="${entry.siteUrl}${meta.image.val}" />`;
     metaString += `<link rel="stylesheet" href="${entry.css}">`
+    metaString += `<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>`;
+    metaString += `<script src="${entry.javascript}"></script>`
     return metaString;
   }
 
   function generateContent(content) {
     let contentHtml = getContentContainer(content, "");
-    console.log(contentHtml);
     return contentHtml;
   }
 
@@ -57,6 +58,7 @@ vinkCms.htmlProcessor = (function() {
 
   return {
     generate: generate,
-    generateContent: generateContent
+    generateContent: generateContent,
+    getContentHtml: getContentHtml
   };
 }());

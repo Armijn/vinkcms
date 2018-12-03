@@ -1,3 +1,4 @@
+//= require_tree ./templates
 //= require config.js
 //= require_directory ./tools
 //= require_directory ./libs

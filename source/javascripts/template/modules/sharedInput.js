@@ -3,14 +3,19 @@ vinkCms.modules.sharedInput = (function() {
   let item;
   let cb;
 
-  function generate(container, contentBlock, imageUpload) {
-    let textAreaContainer = $(`<div class="${contentBlock.type}"><${contentBlock.type}></${contentBlock.type}></div>`).appendTo(container);
-    item = textAreaContainer.find(contentBlock.type);
+  function generate(container, contentBlock, imageUpload, type) {
+    let textAreaContainer = $(`<div class="${type}"><${type} ${vinkCms.helper.attrToString(contentBlock.attr)}></${type}></div>`).appendTo(container);
+    if(contentBlock.label) {
+      let label = $(`<label>${contentBlock.label}</label>`).appendTo(container);
+      textAreaContainer.appendTo(label);
+    }
+    item = textAreaContainer.find(type);
     cb = contentBlock;
     item.attr(contentBlock.attr || "");
     if(contentBlock.val) item.val(contentBlock.val);
     contentBlock.reference = this;
     if(contentBlock.isImage) addImageUploadButton(textAreaContainer, contentBlock);
+    return this;
   }
 
   function addImageUploadButton(container, contentBlock) {

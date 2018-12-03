@@ -30,7 +30,7 @@ vinkCms.imagePicker = (function() {
     });
 
     vinkCms.s3.list({
-      Dir: "images/", Bucket: vinkCms.s3.getSiteBucket(), callback: onImagesRecieved
+      Dir: "images/upload/", Bucket: vinkCms.s3.getSiteBucket(), callback: onImagesRecieved
     });
   }
 
@@ -125,7 +125,7 @@ vinkCms.imagePicker = (function() {
 
   function upload(file, queue) {
     let params = vinkCms.params.getHtmlParams({
-        Key: `images/${file.fileName}`,
+        Key: `images/upload/${file.fileName}`,
         Body: file,
         ContentType: file.type
       }, onImageUploaded
@@ -135,7 +135,7 @@ vinkCms.imagePicker = (function() {
 
   function onImageUploaded(data) {
     vinkCms.s3.list({
-      Dir: "images/", Bucket: vinkCms.s3.getSiteBucket(), callback: onImagesRecieved
+      Dir: "images/upload/", Bucket: vinkCms.s3.getSiteBucket(), callback: onImagesRecieved
     });
   }
 

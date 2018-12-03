@@ -37,20 +37,22 @@ vinkCms.template = (function() {
     container.append(`<h1>${entry.name}</h1>`);
     addCustomContentBlocks(container, "Metadata", Object.values(template.meta));
     addCustomContentBlocks(container, "JSON", entry.json);
-    addCustomContentBlocks(container, "Content", entry.content);
+    addCustomContentBlocks(container, "Content", entry.content, vinkCms.s3.getUrlFor(entry.css));
   }
 
-  function addCustomContentBlocks(container, name, items) {
+  function addCustomContentBlocks(container, name, items, css) {
     if(!items) return;
     let fieldSet = $("<fieldset></fieldset>").appendTo(container);
     fieldSet.append(`<h2>${name}</h2>`);
-    addContents(fieldSet, items);
+    addContents(fieldSet, items, css);
   }
 
-  function addContents(container, items) {
+  function addContents(container, items, css, parentClass) {
     items.forEach(function(contentBlock) {
+      if(parentClass) contentBlock.parentClass = [parentClass, contentBlock.containerAttr];
+      if(css) contentBlock.css = css;
       if(contentBlock.content) {
-        addContents(container, contentBlock.content);
+        addContents(container, contentBlock.content, css, contentBlock.containerAttr);
       } else {
         vinkCms.modules[contentBlock.type]().generate(container, contentBlock);
       }
