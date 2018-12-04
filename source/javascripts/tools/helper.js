@@ -55,9 +55,37 @@ vinkCms.helper = (function() {
     txtarea.scrollTop = scrollPos;
   }
 
+  function categorizeList(container, data) {
+    let structure = [];
+    Object.keys(data).forEach(function(key) {
+      const split = key.split("/").splice(0, key.split("/").length);
+      let lastItem = container;
+      split.forEach(function(path) {
+        if(split.indexOf(path) == split.length-1) {
+          lastItem.prepend(`<a href="#${key}">${path}</a>`);
+          return;
+        }
+        if(!lastItem.find(`.${path}`).length) {
+          lastItem = $(`<div data-folder="${path}" class="${path} folder collapsed js-collapse"></div>`).appendTo(lastItem);
+        } else {
+          lastItem = lastItem.find(`.${path}`);
+        }
+      });
+    });
+
+    $(".js-collapse").click(function(e) {
+      e.stopImmediatePropagation();
+      $(this).toggleClass("collapsed");
+    }).children().click(function(e) {
+      window.location = $(this).attr("href");
+      return false;
+    });;
+  }
+
   return {
     clone: clone,
     insertAtCaret: insertAtCaret,
-    attrToString: attrToString
+    attrToString: attrToString,
+    categorizeList: categorizeList
   };
 }());

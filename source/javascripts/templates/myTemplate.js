@@ -1,8 +1,9 @@
 myTemplate = {
   name: "My template",
-  siteUrl: "https://example.com",
-  css: "stylesheets/site.css",
-  javascript: "javascripts/script.js",
+  siteUrl: "https://example.com/",
+  css: "/stylesheets/site.css",
+  javascript: "/javascripts/script.js",
+  prefix: "prefix/",
   json: [
     {
       type: "input",

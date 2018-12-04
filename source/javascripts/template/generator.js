@@ -28,7 +28,7 @@ vinkCms.template = (function() {
   function editEntry(container, template) {
     template.oldSlug = template.meta.slug.val;
     generate(container, template);
-    $("h1").append(` - <a target="_blank" href="${vinkCms.s3.getUrlFor(template.meta.slug.val)}">${template.meta.slug.val}</a>`);
+    $("h1").append(` - <a target="_blank" href="${vinkCms.s3.getUrlFor(template.meta.slug.fullSlug)}">${template.meta.slug.val}</a>`);
   }
 
   function generate(container, template) {
@@ -64,10 +64,12 @@ vinkCms.template = (function() {
     let meta = JSON.stringify(vinkCms.jsonProcessor.generateMeta(entry));
     let html = vinkCms.htmlProcessor.generate(entry);
     let data = {
-      html: { Key: entry.meta.slug.val, Body: html },
-      entry: { Key: entry.meta.slug.val, Body: entryJson },
-      meta: { slug: entry.meta.slug.val, Body: meta }
+      html: { Key: entry.meta.slug.fullSlug, Body: html },
+      entry: { Key: entry.meta.slug.fullSlug, Body: entryJson },
+      meta: { slug: entry.meta.slug.fullSlug, Body: meta }
     };
+
+    console.log(data);
 
     if(entry.oldSlug == undefined || entry.oldSlug === entry.meta.slug.val) {
       uploadEntry(data);

@@ -7,6 +7,10 @@ vinkCms.jsonProcessor = (function() {
       let metaBlock = entry.meta[key];
       metaBlock.val = metaBlock.reference.val();
       metaBlock.html = metaBlock.reference.html();
+      if(key === "slug")
+        metaBlock.fullSlug = metaBlock.val;
+      if(entry.prefix && key === "slug")
+        metaBlock.fullSlug = entry.prefix + metaBlock.val;
       delete metaBlock.reference;
     });
 
@@ -37,8 +41,7 @@ vinkCms.jsonProcessor = (function() {
   }
 
   function generateMeta(entry) {
-    let slug = entry.meta.slug.val;
-    delete entry.meta.slug.reference;
+    let slug = entry.meta.slug.fullSlug;
     let metaJson = { [slug]: {}};
 
     alsoJson.forEach(function(contentBlock) {

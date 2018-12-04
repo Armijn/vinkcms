@@ -3,9 +3,7 @@ vinkCms.cmsUI = (function() {
   function init() {
     $(function() {
       vinkCms.navigator.setupNav($(".js-new-items"), newEntry);
-      vinkCms.s3.list({
-        Dir: "", Bucket: vinkCms.s3.getDataBucket(), callback: onRetievedList
-      });
+      $.get(vinkCms.s3.getUrlFor(".vinkcms/data.json"), onRetievedList);
 
       $("form").on("submit", function(e) {
         e.preventDefault();
@@ -73,10 +71,7 @@ function onEntryUploaded(data) {
 }
 
 function onRetievedList(list) {
-  list.forEach(function(listItem) {
-    let link = $(`<a href="#${listItem.Key}">${listItem.Key}</a>`)
-    $(".list").append(link);
-  });
+  vinkCms.helper.categorizeList($(".list"), list);
 }
 
 function newEntry(templateId) {
