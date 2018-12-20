@@ -8,6 +8,23 @@ vinkCms.helper = (function() {
       return copy;
   }
 
+  function slugify(str) {
+    str = str.replace(/^\s+|\s+$/g, '');
+    str = str.toLowerCase();
+
+    var from = "àáãäâèéëêìíïîòóöôùúüûñç·/_,:;";
+    var to   = "aaaaaeeeeiiiioooouuuunc------";
+    for (let i = 0, l = from.length ; i < l; i++) {
+      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+
+    str = str.replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+
+    return str;
+  }
+
   function attrToString(containerAttr) {
     let stringAttr = "";
     Object.keys(containerAttr).forEach(function(key) {
@@ -86,6 +103,7 @@ vinkCms.helper = (function() {
     clone: clone,
     insertAtCaret: insertAtCaret,
     attrToString: attrToString,
-    categorizeList: categorizeList
+    categorizeList: categorizeList,
+    slugify: slugify
   };
 }());

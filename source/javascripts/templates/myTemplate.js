@@ -1,9 +1,9 @@
 myTemplate = {
   name: "My template",
-  siteUrl: "https://example.com/",
-  css: "/stylesheets/site.css",
-  javascript: "/javascripts/script.js",
-  prefix: "prefix/",
+  siteUrl: "https://example.com",
+  css: "stylesheets/site.css",
+  javascript: "javascripts/script.js",
+  prefix: "",
   json: [
     {
       type: "input",
@@ -16,6 +16,12 @@ myTemplate = {
       attr: { placeholder: "Lng" }
     }
   ],
+  meta: {
+    otherMeta: {
+      type: "textarea",
+      attr: { placeholder: "Other meta" }
+    }
+  },
   content: [
     {
       containerAttr: { id: "layout", class: "content-container active" },
@@ -37,7 +43,7 @@ myTemplate = {
           containerAttr: { class: "links" },
           content: [
             {
-              type: "input",
+              type: "linkInput",
               text: "See on map",
               containerAttr: { class: "see-map" },
               attr: { placeholder: "See map link" }

@@ -17,11 +17,14 @@ vinkCms.htmlProcessor = (function() {
   function getMeta(entry) {
     let meta = entry.meta;
     let metaString = "";
+    metaString += `<meta name="viewport" content="width=device-width, initial-scale=1.0">`;
     metaString += `<title>${meta.title.val}</title>`;
+    metaString += `<meta property="description" content="${meta.description.val}" />`;
     metaString += `<meta property="og:title" content="${meta.title.val}" />`;
     metaString += `<meta property="og:description" content="${meta.description.val}" />`;
     metaString += `<meta property="og:image" content="${entry.siteUrl}${meta.image.val}" />`;
-    metaString += `<meta property="og:url" content="${entry.siteUrl}${meta.image.val}" />`;
+    metaString += `<meta property="og:url" content="${entry.siteUrl}/${meta.slug.val}" />`;
+    metaString += meta.otherMeta.val;
     metaString += `<link rel="stylesheet" href="${entry.css}">`
     metaString += `<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>`;
     metaString += `<script src="${entry.javascript}"></script>`

@@ -96,3 +96,138 @@ In aws go to `IAM` and go to `Roles`. You will see the authentication roles setu
 ### Getting the identity pool id
 
 In aws go to `IAM` and go to `Roles`. Click on your `Cognito_example.com_Unauth_Role` and click `Attach policies`, then click on tab `Trust relationships`. in the right corner will be the `pool id`, it should look something like `eu-central-1:your_long_key`. Copy this because you'll need it to authenticate.
+
+# Configuration
+## templates
+template files are used to generate pages for your cms, below you'll find the options you can use. Template files can be added inside the `config.js`, for readabillity I put the `myTemplate` in a different file. You can nest content blocks to make complex layouts, just make sure it has a `content` array. 
+
+- **name**: The name of the template
+- **siteUrl**: The full site url eg: `https://example.com`
+- **css**: The location of the css file that will be used for the template, eg: `stylesheets/site.css`
+- **javascript**: The location of the javascript file that will be used for the template, eg: `javascripts/script.js`
+- **prefix**: A prefix for the template, used to save the template in a specific directory, eg: `reviews/`
+- **json**: An array of content blocks, used to save data to a specific json file. It will be saved to `./vinkcms/data.json` inside the bucket
+	- **type**: `input`, `linkInput`, `textarea`, `markDownTextArea`
+	- **name**: name of the json attribute
+	- **attr**: attributes used on the cms item, handy for placeholder text or html validation. eg: `{ placeholder: "My text",  required: true }`
+- **meta**: An array of content blocks, used to build the head
+- **content**: An array of content blocks, used to build up the body
+	- **type**: `input`, `linkInput`, `textarea`, `markDownTextArea`
+	- **containerAttr**: Attributes that will be injected on the container in the exported html
+	- **img**: When using this on `input` or `markDownTextArea` you will be able to upload images to s3, scrset is supported and it will upload the images in different sizes as you provide them
+		- **orgsize**: The original size of the image, eg: `{ width: 786, height: 786 }`
+		- **srcset**: An array with srcsets, only `w` is currently supported. eg: `["160w","250w", "560w", "768w"]`
+		- **sizes**: Sizes attributes, will be injected in the exported `img`. eg: `(max-width: 560px) 560px, (max-width: 384px) 384px, 768px`
+		- **name**: Only use in combination with `exportToJson: true`
+		- **exportToJson**: Also exports the value to the json file
+		- **label**: Label for the cms item
+		- **attr**: attributes used on the cms item, handy for placeholder text or html validation. eg: `{ placeholder: "My text",  required: true }`
+
+## Example template
+```javascript
+{
+  name: "My template",
+  siteUrl: "https://example.com",
+  css: "stylesheets/site.css",
+  javascript: "javascripts/script.js",
+  prefix: "",
+  json: [
+    {
+      type: "input",
+      name: "lat",
+      attr: { placeholder: "Lat" }
+    },
+    {
+      type: "input",
+      name: "lng",
+      attr: { placeholder: "Lng" }
+    }
+  ],
+  meta: {
+    otherMeta: {
+      type: "textarea",
+      attr: { placeholder: "Other meta" }
+    }
+  },
+  content: [
+    {
+      containerAttr: { id: "layout", class: "content-container active" },
+      content: [
+        {
+          type: "markDownTextArea",
+          containerAttr: { class: "intro" },
+          img: {
+            orgsize: { width: 786, height: 786 },
+            srcset: ["160w","250w", "560w", "768w"],
+            sizes: "(max-width: 560px) 560px, (max-width: 384px) 384px, 768px"
+          },
+          name: "content",
+          exportToJson: true,
+          label: "Intro section",
+          attr: { placeholder: "Intro" }
+        },
+        {
+          containerAttr: { class: "links" },
+          content: [
+            {
+              type: "linkInput",
+              text: "See on map",
+              containerAttr: { class: "see-map" },
+              attr: { placeholder: "See map link" }
+            },
+            {
+              type: "linkInput",
+              text: "Order online",
+              containerAttr: { class: "order" },
+              attr: { placeholder: "Order link" }
+            },
+            {
+              type: "linkInput",
+              text: "Book a table",
+              containerAttr: { class: "book" },
+              attr: { placeholder: "Book table link" }
+            },
+            {
+              type: "linkInput",
+              text: "Go to website",
+              containerAttr: { class: "website" },
+              attr: { placeholder: "Website link" }
+            }
+          ]
+        },
+        {
+          containerAttr: { class: "info" },
+          content: [
+            {
+              type: "markDownTextArea",
+              containerAttr: { class: "ingredients" },
+              label: "Ingredients"
+            },
+            {
+              type: "markDownTextArea",
+              containerAttr: { class: "thoughts" },
+              label: "Our thoughts"
+            },
+            {
+              type: "markDownTextArea",
+              containerAttr: { class: "conclusion" },
+              label: "Conclusion"
+            }
+          ]
+        },
+        {
+          type: "markDownTextArea",
+          containerAttr: { id: "entry" },
+          img: {
+            orgsize: { width: 786, height: 786 },
+            srcset: ["160w","250w", "560w", "768w"],
+            sizes: "(max-width: 560px) 560px, (max-width: 384px) 384px, 768px"
+          },
+          label: "Review",
+          attr: { placeholder: "Main content" }
+        }
+      ]
+    }
+  ]
+}
+```

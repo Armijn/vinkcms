@@ -8,6 +8,7 @@ vinkCms.jsonProcessor = (function() {
       metaBlock.val = metaBlock.reference.val();
       metaBlock.html = metaBlock.reference.html();
       if(key === "slug")
+        metaBlock.val = vinkCms.helper.slugify(metaBlock.val);
         metaBlock.fullSlug = metaBlock.val;
       if(entry.prefix && key === "slug")
         metaBlock.fullSlug = entry.prefix + metaBlock.val;
